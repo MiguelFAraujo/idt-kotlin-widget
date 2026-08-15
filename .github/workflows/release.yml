@@ -54,4 +54,3 @@ jobs:
           files: |
             dist/IDT-Status-Widget-${{ steps.version.outputs.tag }}.apk
             dist/update.json
-          generate_release_notes: true
