@@ -1,0 +1,15 @@
+R_DEF: Internal format may change without notice
+local
+drawable widget_bg
+id tvStatus
+id tvTitle
+id widget_root
+layout status_widget
+string app_name
+string status_degraded
+string status_down
+string status_loading
+string status_ok
+string widget_description
+string widget_name
+xml status_widget_info
