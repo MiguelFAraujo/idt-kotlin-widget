@@ -13,10 +13,15 @@ import java.net.Socket
 import java.util.concurrent.TimeUnit
 
 /**
- * Motor de verificação de serviços com 3 subprocessos e 5 rodadas de autenticação.
+ * Motor de verificação de serviços.
+ *
+ * Regra principal: porta TCP aberta = serviço online (uptime).
+ * O probe HTTP só qualifica a resposta; qualquer status HTTP (2xx-5xx)
+ * significa que o serviço está de pé e respondendo.
  *
  * Subprocesso 1 — TCP probe: conecta no host:porta (timeout 3s).
- * Subprocesso 2 — HTTP probe: GET / aceita 200-399 (timeout 3s).
+ * Subprocesso 2 — Detecta TLS no socket (Portainer 9443 etc.) e faz GET /:
+ *   qualquer status 2xx-5xx = online. Se a porta não fala HTTP, "porta aberta (sem HTTP)".
  * Subprocesso 3 — Auth probe: 5 rodadas em cascata até conseguir:
  *   R1 anônimo · R2 Basic user/pass · R3 Bearer token · R4 WebDAV PROPFIND Basic · R5 custom header X-IDT-Token
  */
@@ -47,23 +52,22 @@ class ServiceChecker(
             )
         }
 
-        val httpResult = httpProbe(endpoint)
-        return@withContext when (httpResult) {
-            null -> ServiceCheckResult(
-                endpoint, ok = true,
-                roundUsed = "TCP", latencyMs = System.currentTimeMillis() - started,
-                message = "porta aberta (sem HTTP)",
-            )
-            else -> ServiceCheckResult(
-                endpoint, ok = httpResult.ok,
-                roundUsed = httpResult.round,
-                latencyMs = System.currentTimeMillis() - started,
-                message = httpResult.message,
-            )
+        val isTls = detectTls(endpoint.host, endpoint.port)
+        val httpResult = httpProbe(endpoint, isTls)
+
+        val message = when {
+            httpResult != null -> "${if (isTls) "HTTPS" else "HTTP"} ${httpResult.code}"
+            else -> "porta aberta (sem HTTP)"
         }
+        ServiceCheckResult(
+            endpoint, ok = true,
+            roundUsed = if (httpResult == null) "TCP" else httpResult.round,
+            latencyMs = System.currentTimeMillis() - started,
+            message = message,
+        )
     }
 
-    private data class HttpOutcome(val ok: Boolean, val round: String, val message: String)
+    private data class HttpOutcome(val code: Int, val round: String)
 
     private fun tcpProbe(host: String, port: Int): Boolean = try {
         Socket().use { it.connect(InetSocketAddress(host, port), tcpTimeoutMs) }
@@ -74,14 +78,26 @@ class ServiceChecker(
         false
     }
 
-    private fun httpProbe(endpoint: ServiceEndpoint): HttpOutcome? {
-        val base = "http://${endpoint.host}:${endpoint.port}"
-        // Subprocesso 2 — HTTP simples
+    /** Primeiro byte do handshake TLS é 0x16 (ClientHello/ServerHello). */
+    private fun detectTls(host: String, port: Int): Boolean = try {
+        Socket().use { s ->
+            s.connect(InetSocketAddress(host, port), tcpTimeoutMs)
+            s.soTimeout = 2000
+            val b = s.getInputStream().read()
+            b == 0x16
+        }
+    } catch (e: Exception) {
+        false
+    }
+
+    private fun httpProbe(endpoint: ServiceEndpoint, tls: Boolean): HttpOutcome? {
+        val scheme = if (tls) "https" else "http"
+        val base = "$scheme://${endpoint.host}:${endpoint.port}"
+
         val anon = runRound(base, endpoint, "R1", headersOf("R1"))
         if (anon != null) return anon
 
         if (endpoint.requireAuth) {
-            // Subprocesso 3 — 5 rodadas de autenticação em cascata
             for (round in listOf("R2", "R3", "R4", "R5")) {
                 val out = runRound(base, endpoint, round, headersOf(round))
                 if (out != null) return out
@@ -104,7 +120,6 @@ class ServiceChecker(
     }
 
     private fun runRound(base: String, endpoint: ServiceEndpoint, round: String, headers: Map<String, String>): HttpOutcome? {
-        if (headers.isEmpty()) return null
         val request = try {
             val method = if (round == "R4") "PROPFIND" else "GET"
             Request.Builder()
@@ -113,21 +128,14 @@ class ServiceChecker(
                 .apply { headers.forEach { (k, v) -> addHeader(k, v) } }
                 .build()
         } catch (e: Exception) {
-            return HttpOutcome(false, round, "URL inválida: ${e.message}")
+            return null
         }
         return try {
             client.newCall(request).execute().use { resp ->
-                val code = resp.code
-                when {
-                    code in 200..399 -> HttpOutcome(true, round, "HTTP $code")
-                    code in 400..499 -> HttpOutcome(false, round, "HTTP $code")
-                    else -> HttpOutcome(false, round, "HTTP $code")
-                }
+                HttpOutcome(resp.code, round)
             }
-        } catch (e: IOException) {
-            HttpOutcome(false, round, "sem HTTP: ${e.message ?: "timeout"}")
         } catch (e: Exception) {
-            HttpOutcome(false, round, "erro: ${e.message}")
+            null
         }
     }
 }

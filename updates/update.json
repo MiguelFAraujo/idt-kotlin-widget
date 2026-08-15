@@ -1,7 +1,7 @@
 {
-  "versionName": "0.0.3",
-  "versionCode": 3,
-  "apkUrl": "https://github.com/MiguelFAraujo/idt-kotlin-widget/releases/download/v0.0.3/IDT-Status-Widget-v0.0.3.apk",
-  "changelog": "FIX: app crashava ao abrir (Tema com DarkActionBar + Toolbar = conflito). Agora usa NoActionBar. Descoberto e validado no sandbox Android.",
+  "versionName": "0.0.4",
+  "versionCode": 4,
+  "apkUrl": "https://github.com/MiguelFAraujo/idt-kotlin-widget/releases/download/v0.0.4/IDT-Status-Widget-v0.0.4.apk",
+  "changelog": "Motor de verificação corrigido: porta TCP aberta = online; qualquer status HTTP (2xx-5xx) = serviço de pé; detecção automática de TLS (HTTPS, ex: Portainer 9443); catálogo aponta para o lab real via Tailscale 100.104.13.42; checagens em paralelo; botão refresh do menu agora atualiza o painel.",
   "minVersionCode": 1
 }

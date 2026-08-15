@@ -29,9 +29,9 @@
             android:id="@+id/tvHostPort"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="127.0.0.1:8080"
+            android:text="100.104.13.42:8080"
             android:textSize="13sp"
-            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textColor="?attr/colorOnSurface"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvName"
             app:layout_constraintEnd_toStartOf="@id/swEnabled" />

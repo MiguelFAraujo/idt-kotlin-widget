@@ -1,6 +1,7 @@
 package com.idt.widget.ui.dashboard
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.idt.widget.BuildConfig
 import com.idt.widget.IDTApplication
+import com.idt.widget.MainActivity
 import com.idt.widget.R
 import com.idt.widget.data.model.UpdateInfo
 import com.idt.widget.data.remote.UpdateChecker
@@ -47,6 +49,9 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
         binding.swipeRefresh.setOnRefreshListener { viewModel.refresh() }
         binding.btnSettings.setOnClickListener { findNavController().navigate(R.id.action_dashboard_to_settings) }
         binding.btnEndpoints.setOnClickListener { findNavController().navigate(R.id.action_dashboard_to_endpoints) }
+
+        (requireActivity() as? MainActivity)?.onRefreshRequested = { viewModel.refresh() }
+        Log.d("IDT_MAIN", "DashboardFragment.onViewCreated: callback registrado")
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

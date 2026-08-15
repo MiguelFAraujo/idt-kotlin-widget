@@ -37,7 +37,7 @@ class DiagnosticsFragment : Fragment(R.layout.fragment_diagnostics) {
     }
 
     private fun host(): String =
-        binding.etHost.text?.toString()?.trim()?.ifEmpty { "192.168.1.9" } ?: "192.168.1.9"
+        binding.etHost.text?.toString()?.trim()?.ifEmpty { "100.104.13.42" } ?: "100.104.13.42"
 
     private fun runScan() {
         val h = host()

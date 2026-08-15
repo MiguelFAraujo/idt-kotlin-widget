@@ -1,6 +1,7 @@
 package com.idt.widget
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +13,8 @@ import androidx.navigation.ui.NavigationUI
 class MainActivity : AppCompatActivity() {
 
     private lateinit var navController: NavController
+
+    var onRefreshRequested: (() -> Unit)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,13 +37,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        Log.d("IDT_MAIN", "onOptionsItemSelected: ${item.itemId}")
         return when (item.itemId) {
             R.id.action_refresh -> {
-                navController.navigate(R.id.action_dashboard_to_endpoints)
+                Log.d("IDT_MAIN", "action_refresh: callback ${if (onRefreshRequested == null) "NULL" else "OK"}")
+                onRefreshRequested?.invoke()
                 true
             }
             R.id.action_settings -> {
                 navController.navigate(R.id.action_dashboard_to_settings)
+                true
+            }
+            R.id.action_endpoints -> {
+                navController.navigate(R.id.action_dashboard_to_endpoints)
                 true
             }
             R.id.action_diagnostics -> {

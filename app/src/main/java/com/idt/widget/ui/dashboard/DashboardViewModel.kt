@@ -9,6 +9,8 @@ import com.idt.widget.domain.repository.HistoryRepository
 import com.idt.widget.domain.repository.ServiceRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 
 data class DashboardUiState(
@@ -51,7 +53,9 @@ class DashboardViewModel(
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
             try {
                 val endpoints = repository.getEndpoints().filter { it.enabled }
-                val results = endpoints.map { repository.checkService(it) }
+                val results = endpoints
+                    .map { async { repository.checkService(it) } }
+                    .awaitAll()
                 history.record(results, System.currentTimeMillis())
                 val ok = results.count { it.ok }
                 _uiState.value = _uiState.value.copy(
