@@ -1,8 +1,10 @@
 package com.idt.widget
 
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
+import android.content.Intent
 import android.widget.RemoteViews
 import androidx.work.*
 import java.util.concurrent.TimeUnit
@@ -11,9 +13,9 @@ class StatusWidgetProvider : AppWidgetProvider() {
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         scheduleRefresh(context)
+        val views = buildViews(context, "Atualizando...")
         appWidgetIds.forEach { id ->
-            appWidgetManager.notifyAppWidgetViewDataChanged(id, R.id.lvServices)
-            appWidgetManager.partiallyUpdateAppWidget(id, buildViews(context, "Atualizando..."))
+            appWidgetManager.partiallyUpdateAppWidget(id, views)
         }
     }
 
@@ -25,7 +27,7 @@ class StatusWidgetProvider : AppWidgetProvider() {
         WorkManager.getInstance(context).cancelUniqueWork(REFRESH_WORK)
     }
 
-    private fun scheduleRefresh(context: Context) {
+    fun scheduleRefresh(context: Context) {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
@@ -44,5 +46,11 @@ class StatusWidgetProvider : AppWidgetProvider() {
 
     companion object {
         const val REFRESH_WORK = "idt_status_refresh"
+    }
+
+    private fun buildViews(context: Context, statusText: String): RemoteViews {
+        return RemoteViews(context.packageName, R.layout.status_widget).apply {
+            setTextViewText(R.id.tvStatus, statusText)
+        }
     }
 }
