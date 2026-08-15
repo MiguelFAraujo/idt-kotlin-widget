@@ -34,12 +34,8 @@ jobs:
         run: |
           if [ -n "$RELEASE_KEYSTORE_B64" ]; then
             echo "$RELEASE_KEYSTORE_B64" | base64 -d > release.keystore
-            cat > keystore.properties <<EOF
-            storeFile=release.keystore
-            storePassword=$KEYSTORE_PASSWORD
-            keyAlias=$KEY_ALIAS
-            keyPassword=$KEY_PASSWORD
-            EOF
+            printf 'storeFile=release.keystore\nstorePassword=%s\nkeyAlias=%s\nkeyPassword=%s\n' \
+              "$KEYSTORE_PASSWORD" "$KEY_ALIAS" "$KEY_PASSWORD" > keystore.properties
           fi
 
       - name: Build signed release APK
@@ -63,15 +59,8 @@ jobs:
         run: |
           VERSION_TAG="${{ steps.version.outputs.tag }}"
           VERSION_CODE=$(grep -E 'versionCode' app/build.gradle.kts | sed -E 's/[^0-9]//g' | head -1)
-          cat > dist/update.json <<EOF
-          {
-            "versionName": "$VERSION_TAG",
-            "versionCode": $VERSION_CODE,
-            "apkUrl": "https://github.com/${{ github.repository }}/releases/download/$VERSION_TAG/IDT-Status-Widget-$VERSION_TAG.apk",
-            "changelog": "Versão $VERSION_TAG do IDT Status Widget.",
-            "minVersionCode": 1
-          }
-          EOF
+          printf '{\n  "versionName": "%s",\n  "versionCode": %s,\n  "apkUrl": "https://github.com/%s/releases/download/%s/IDT-Status-Widget-%s.apk",\n  "changelog": "Versao %s do IDT Status Widget.",\n  "minVersionCode": 1\n}\n' \
+            "$VERSION_TAG" "$VERSION_CODE" "${{ github.repository }}" "$VERSION_TAG" "$VERSION_TAG" "$VERSION_TAG" > dist/update.json
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
