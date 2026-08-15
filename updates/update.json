@@ -1,7 +1,7 @@
 {
-  "versionName": "0.0.2",
-  "versionCode": 2,
-  "apkUrl": "https://github.com/MiguelFAraujo/idt-kotlin-widget/releases/download/v0.0.2/IDT-Status-Widget-v0.0.2.apk",
-  "changelog": "Ícone do app redesenhado (adaptive icon com pulso ECG + status verde) — antes ficava um quadrado cinza sem ícone.",
+  "versionName": "0.0.3",
+  "versionCode": 3,
+  "apkUrl": "https://github.com/MiguelFAraujo/idt-kotlin-widget/releases/download/v0.0.3/IDT-Status-Widget-v0.0.3.apk",
+  "changelog": "FIX: app crashava ao abrir (Tema com DarkActionBar + Toolbar = conflito). Agora usa NoActionBar. Descoberto e validado no sandbox Android.",
   "minVersionCode": 1
 }
