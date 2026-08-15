@@ -4,10 +4,26 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-  <path
-      android:pathData="M54,54m-45,0a45,45 0,1 1,90 0a45,45 0,1 1,-90 0"
-      android:fillColor="#60a5fa"/>
-  <path
-      android:pathData="M54,34 L66,54 L54,74 L42,54z"
-      android:fillColor="#ffffff"/>
+
+    <!-- Pulso ECG (linha branca) -->
+    <path
+        android:pathData="M22,54 L34,54 L40,42 L46,60 L51,48 L56,58 L61,44 L66,54 L86,54"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="#00000000" />
+
+    <!-- Dot de status (verde = online) -->
+    <path
+        android:pathData="M78,32 m-7,0 a7,7 0,1 1,14 0 a7,7 0,1 1,-14 0"
+        android:fillColor="#34d399" />
+
+    <!-- Anel de brilho ao redor do dot -->
+    <path
+        android:pathData="M78,32 m-11,0 a11,11 0,1 1,22 0 a11,11 0,1 1,-22 0"
+        android:strokeColor="#34d399"
+        android:strokeWidth="2"
+        android:strokeAlpha="0.5"
+        android:fillColor="#00000000" />
 </vector>

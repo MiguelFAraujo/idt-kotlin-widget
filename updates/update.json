@@ -1,7 +1,7 @@
 {
-  "versionName": "0.0.1",
-  "versionCode": 1,
-  "apkUrl": "https://github.com/MiguelFAraujo/idt-kotlin-widget/releases/download/v0.0.1/IDT-Status-Widget-v0.0.1.apk",
-  "changelog": "Primeira versão (v0.0.1): dashboard animado, histórico de uptime, gráficos de latência, utilidades de rede e atualização automática via GitHub Releases. APK assinado.",
+  "versionName": "0.0.2",
+  "versionCode": 2,
+  "apkUrl": "https://github.com/MiguelFAraujo/idt-kotlin-widget/releases/download/v0.0.2/IDT-Status-Widget-v0.0.2.apk",
+  "changelog": "Ícone do app redesenhado (adaptive icon com pulso ECG + status verde) — antes ficava um quadrado cinza sem ícone.",
   "minVersionCode": 1
 }
