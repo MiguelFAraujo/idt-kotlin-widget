@@ -48,7 +48,7 @@ class ConfigDataSource(context: Context) {
         useWebDav = prefs.getBoolean("use_webdav", false),
         autoDiscover = prefs.getBoolean("auto_discover", true),
         autoRefresh = prefs.getBoolean("auto_refresh", true),
-        refreshIntervalSeconds = prefs.getLong("refresh_interval", 300),
+        refreshIntervalSeconds = prefs.getLong("refresh_interval", 10),
         showNotifications = prefs.getBoolean("show_notifications", false),
         compactView = prefs.getBoolean("compact_view", false),
     )

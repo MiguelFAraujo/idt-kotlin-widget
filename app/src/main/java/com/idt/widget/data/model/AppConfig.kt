@@ -8,7 +8,7 @@ data class AppConfig(
     val useWebDav: Boolean = false,
     val autoDiscover: Boolean = true,
     val autoRefresh: Boolean = true,
-    val refreshIntervalSeconds: Long = 300,
+    val refreshIntervalSeconds: Long = 10,
     val showNotifications: Boolean = false,
     val compactView: Boolean = false,
 )

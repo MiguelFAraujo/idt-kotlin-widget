@@ -14,7 +14,7 @@
             android:summary="@string/refresh_interval_summary"
             android:entries="@array/refresh_interval_entries"
             android:entryValues="@array/refresh_interval_values"
-            android:defaultValue="300" />
+            android:defaultValue="10" />
 
         <SwitchPreferenceCompat
             android:key="show_notifications"
