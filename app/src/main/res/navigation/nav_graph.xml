@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/dashboardFragment">
+
+    <fragment
+        android:id="@+id/dashboardFragment"
+        android:name="com.idt.widget.ui.dashboard.DashboardFragment"
+        android:label="@string/dashboard_title">
+        <action
+            android:id="@+id/action_dashboard_to_endpoints"
+            app:destination="@id/endpointsFragment" />
+        <action
+            android:id="@+id/action_dashboard_to_settings"
+            app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_dashboard_to_diagnostics"
+            app:destination="@id/diagnosticsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/endpointsFragment"
+        android:name="com.idt.widget.ui.endpoints.EndpointsFragment"
+        android:label="@string/endpoints_title_frag">
+        <action
+            android:id="@+id/action_endpoints_to_add"
+            app:destination="@id/addEndpointFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addEndpointFragment"
+        android:name="com.idt.widget.ui.addendpoint.AddEndpointFragment"
+        android:label="@string/add_endpoint_title" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.idt.widget.ui.settings.SettingsFragment"
+        android:label="@string/settings_title" />
+
+    <fragment
+        android:id="@+id/diagnosticsFragment"
+        android:name="com.idt.widget.ui.diagnostics.DiagnosticsFragment"
+        android:label="Utilidades" />
+
+</navigation>

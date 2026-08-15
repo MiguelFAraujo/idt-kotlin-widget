@@ -51,5 +51,16 @@
     <!-- Fragment titles -->
     <string name="settings_title">Configurações</string>
     <string name="endpoints_title_frag">Endpoints</string>
+    <string name="dashboard_title">Painel</string>
+    <string name="overall_ok">Tudo OK</string>
+    <string name="overall_partial">%1$d/%2$d online</string>
+    <string name="checking">Verificando...</string>
+    <string name="updated_at">Atualizado %1$s</string>
+    <string name="tap_to_refresh">Toque para atualizar</string>
+    <string name="no_services">Nenhum serviço habilitado.</string>
+    <string name="services_error">Erro: %1$s</string>
+    <string name="status_online">online</string>
+    <string name="status_offline">offline</string>
+    <string name="widget_name_short">IDT Lab</string>
 
 </resources>

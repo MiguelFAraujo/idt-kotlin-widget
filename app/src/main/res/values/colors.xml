@@ -7,4 +7,9 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="status_online">#4CAF50</color>
+    <color name="status_partial">#FFB300</color>
+    <color name="status_offline">#F44336</color>
+    <color name="status_idle">#9E9E9E</color>
 </resources>
