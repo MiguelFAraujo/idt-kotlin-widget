@@ -26,7 +26,15 @@
         <action
             android:id="@+id/action_endpoints_to_add"
             app:destination="@id/addEndpointFragment" />
+        <action
+            android:id="@+id/action_endpoints_to_scan"
+            app:destination="@id/scanFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/scanFragment"
+        android:name="com.idt.widget.ui.scan.ScanFragment"
+        android:label="@string/scan_title" />
 
     <fragment
         android:id="@+id/addEndpointFragment"

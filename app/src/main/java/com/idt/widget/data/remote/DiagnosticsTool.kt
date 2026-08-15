@@ -62,6 +62,40 @@ object DiagnosticsTool {
         9443, 8000, 9001, 3030, 2586, 5001, 7575, 5055,
     )
 
+    private val PORT_NAMES: Map<Int, String> = mapOf(
+        21 to "FTP",
+        22 to "SSH",
+        53 to "DNS",
+        80 to "HTTP",
+        443 to "HTTPS",
+        3306 to "MySQL",
+        5432 to "PostgreSQL",
+        8080 to "HTTP-alt",
+        8443 to "HTTPS-alt",
+        9000 to "MinIO",
+        9090 to "Prometheus",
+        11434 to "Ollama",
+        19999 to "Netdata",
+        3000 to "Gitea",
+        3001 to "Uptime Kuma",
+        3002 to "Homepage",
+        5678 to "n8n",
+        8081 to "Nextcloud",
+        8082 to "Dozzle",
+        8083 to "Filebrowser",
+        9443 to "Portainer",
+        8000 to "Paperless",
+        9001 to "MinIO-Console",
+        3030 to "Grafana",
+        2586 to "ntfy",
+        5001 to "Dockge",
+        7575 to "Homarr",
+        5055 to "Jellyseerr",
+    )
+
+    /** Nome amigável de uma porta conhecida, ou "Porta X". */
+    fun portName(port: Int): String = PORT_NAMES[port] ?: "Porta $port"
+
     /** Resolve DNS de um host. Retorna o primeiro IP ou mensagem de erro. */
     suspend fun dnsLookup(host: String): String = withContext(Dispatchers.IO) {
         try {

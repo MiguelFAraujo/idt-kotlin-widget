@@ -1,7 +1,7 @@
 {
-  "versionName": "0.0.4",
-  "versionCode": 4,
-  "apkUrl": "https://github.com/MiguelFAraujo/idt-kotlin-widget/releases/download/v0.0.4/IDT-Status-Widget-v0.0.4.apk",
-  "changelog": "Motor de verificação corrigido: porta TCP aberta = online; qualquer status HTTP (2xx-5xx) = serviço de pé; detecção automática de TLS (HTTPS, ex: Portainer 9443); catálogo aponta para o lab real via Tailscale 100.104.13.42; checagens em paralelo; botão refresh do menu agora atualiza o painel.",
+  "versionName": "0.0.5",
+  "versionCode": 5,
+  "apkUrl": "https://github.com/MiguelFAraujo/idt-kotlin-widget/releases/download/v0.0.5/IDT-Status-Widget-v0.0.5.apk",
+  "changelog": "Dashboard com atualização automática em tempo real (intervalo configurável); fluxo de escaneamento de host (Escaneia portas, mostra abertas e fechadas, marca as que quer monitorar); widget de status corrigido (mostra online + offline e atualiza ao tocar); layout das linhas de endpoint corrigido (host:porta em linha única).",
   "minVersionCode": 1
 }

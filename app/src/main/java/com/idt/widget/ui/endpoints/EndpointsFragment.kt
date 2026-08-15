@@ -41,6 +41,10 @@ class EndpointsFragment : Fragment(R.layout.fragment_endpoints) {
             findNavController().navigate(R.id.action_endpoints_to_add)
         }
 
+        binding.fabScan.setOnClickListener {
+            findNavController().navigate(R.id.action_endpoints_to_scan)
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.endpoints.collect { list -> adapter.submitList(list) }

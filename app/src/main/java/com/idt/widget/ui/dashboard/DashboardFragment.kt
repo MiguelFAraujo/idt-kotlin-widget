@@ -22,7 +22,8 @@ import com.idt.widget.data.remote.UpdateChecker
 import com.idt.widget.databinding.FragmentDashboardBinding
 import com.idt.widget.ui.ViewModelFactory
 import com.idt.widget.update.ApkUpdater
-import com.idt.widget.widget.WidgetScheduler
+import com.idt.widget.widget.StatusWidgetProvider
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -56,6 +57,19 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state -> render(state) }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // Atualização em tempo real: respeita a config (autoRefresh + intervalo)
+                while (true) {
+                    val cfg = (requireActivity().application as IDTApplication)
+                        .container.configDataSource.getConfig()
+                    val seconds = cfg.refreshIntervalSeconds.coerceAtLeast(10L)
+                    delay(seconds * 1000L)
+                    if (cfg.autoRefresh) viewModel.refresh()
+                }
             }
         }
 
@@ -95,6 +109,10 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
         binding.uptimeStrip.setOkSeries(okSeries)
 
         adapter.submitList(state.cards)
+
+        if (!state.isLoading && state.error == null && state.results.isNotEmpty()) {
+            StatusWidgetProvider.syncCache(requireContext(), state.results)
+        }
 
         renderUpdateBanner(state.updateAvailable)
     }

@@ -45,6 +45,14 @@
     <string name="cancel">Cancelar</string>
     <string name="delete">Excluir</string>
 
+    <!-- Scan -->
+    <string name="scan_title">Escanear host</string>
+    <string name="scan_btn">Escanear portas</string>
+    <string name="scan_host_hint">Endereço do host (ex: seu Tailscale)</string>
+    <string name="scan_summary_idle">Digite o endereço do host (ex: 100.104.13.42) e toque em Escanear.</string>
+    <string name="scan_summary_done">%1$s — %2$d de %3$d portas abertas. Marque as que quer monitorar (desmarque para fechar).</string>
+    <string name="scan_add_selected">Adicionar %1$d selecionadas</string>
+
     <!-- Widget -->
     <string name="widget_configure">Configurar Widget</string>
 

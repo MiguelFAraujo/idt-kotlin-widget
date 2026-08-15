@@ -7,6 +7,7 @@ import com.idt.widget.IDTApplication
 import com.idt.widget.ui.dashboard.DashboardViewModel
 import com.idt.widget.ui.diagnostics.DiagnosticsViewModel
 import com.idt.widget.ui.endpoints.EndpointsViewModel
+import com.idt.widget.ui.scan.ScanViewModel
 
 class ViewModelFactory(
     private val application: IDTApplication,
@@ -22,6 +23,8 @@ class ViewModelFactory(
                 EndpointsViewModel(application.container.serviceRepository, application.container.configDataSource) as T
             modelClass.isAssignableFrom(DiagnosticsViewModel::class.java) ->
                 DiagnosticsViewModel() as T
+            modelClass.isAssignableFrom(ScanViewModel::class.java) ->
+                ScanViewModel(application.container.serviceRepository) as T
             else -> throw IllegalArgumentException("ViewModel desconhecido: ${modelClass.name}")
         }
     }
