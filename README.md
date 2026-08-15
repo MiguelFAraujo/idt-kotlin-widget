@@ -112,7 +112,7 @@ O workflow decodifica o keystore dos secrets (`RELEASE_KEYSTORE_B64`, `KEYSTORE_
 
 ## Roadmap
 
-- [ ] Assinatura de release (keystore) + workflow assinado
+- [x] Assinatura de release (keystore) + workflow assinado (v0.0.4)
 - [ ] Tela de detalhe por serviço (histórico completo + gráfico)
 - [ ] Suporte a HTTPS self-signed e TLS custom
 - [ ] Widget com gráfico mini de latência
