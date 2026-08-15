@@ -25,25 +25,48 @@ jobs:
       - name: Grant gradle permission
         run: chmod +x gradlew
 
-      - name: Build release APK
+      - name: Decode release keystore
+        env:
+          RELEASE_KEYSTORE_B64: ${{ secrets.RELEASE_KEYSTORE_B64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          if [ -n "$RELEASE_KEYSTORE_B64" ]; then
+            echo "$RELEASE_KEYSTORE_B64" | base64 -d > release.keystore
+            cat > keystore.properties <<EOF
+            storeFile=release.keystore
+            storePassword=$KEYSTORE_PASSWORD
+            keyAlias=$KEY_ALIAS
+            keyPassword=$KEY_PASSWORD
+            EOF
+          fi
+
+      - name: Build signed release APK
         run: ./gradlew assembleRelease
 
       - name: Determine version
         id: version
         run: echo "tag=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
 
+      - name: Verify APK is signed
+        run: |
+          ls app/build/outputs/apk/release/
+          echo "SIGNED_APK=$(ls app/build/outputs/apk/release/ | grep -E '^app-release\.apk$' || echo app-release-unsigned.apk)" >> "$GITHUB_ENV"
+
       - name: Name APK artifact
         run: |
           mkdir -p dist
-          cp app/build/outputs/apk/release/app-release-unsigned.apk dist/IDT-Status-Widget-${{ steps.version.outputs.tag }}.apk
+          cp "app/build/outputs/apk/release/$SIGNED_APK" dist/IDT-Status-Widget-${{ steps.version.outputs.tag }}.apk
 
       - name: Generate update.json
         run: |
           VERSION_TAG="${{ steps.version.outputs.tag }}"
+          VERSION_CODE=$(grep -E 'versionCode' app/build.gradle.kts | sed -E 's/[^0-9]//g' | head -1)
           cat > dist/update.json <<EOF
           {
             "versionName": "$VERSION_TAG",
-            "versionCode": 2,
+            "versionCode": $VERSION_CODE,
             "apkUrl": "https://github.com/${{ github.repository }}/releases/download/$VERSION_TAG/IDT-Status-Widget-$VERSION_TAG.apk",
             "changelog": "Versão $VERSION_TAG do IDT Status Widget.",
             "minVersionCode": 1

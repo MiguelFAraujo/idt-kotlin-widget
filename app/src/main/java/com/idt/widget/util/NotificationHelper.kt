@@ -7,12 +7,12 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.idt.widget.R
+import com.idt.widget.update.UpdateNowReceiver
 
 object NotificationHelper {
     const val CHANNEL_UPDATE = "idt_updates"
@@ -29,6 +29,13 @@ object NotificationHelper {
                     NotificationManager.IMPORTANCE_DEFAULT,
                 ).apply { description = "Avisa quando existe uma nova versão do app" }
             )
+            nm.createNotificationChannel(
+                NotificationChannel(
+                    "idt_update_progress",
+                    "Progresso da atualização",
+                    NotificationManager.IMPORTANCE_LOW,
+                ).apply { description = "Progresso do download e instalação" }
+            )
         }
     }
 
@@ -38,23 +45,17 @@ object NotificationHelper {
             != PackageManager.PERMISSION_GRANTED
         ) return
 
-        val open = Intent(Intent.ACTION_VIEW, Uri.parse(apkUrl)).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        val pendingOpen = PendingIntent.getActivity(
-            context, 0, open,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-        )
+        val pendingUpdateNow = UpdateNowReceiver.pendingIntent(context, apkUrl, versionName)
 
         val notif = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_info)
             .setContentTitle("Nova versão $versionName")
-            .setContentText("Uma atualização do IDT Status está disponível. Toque para baixar.")
+            .setContentText("Uma atualização do IDT Status está disponível. Toque em Baixar agora.")
             .setStyle(NotificationCompat.BigTextStyle().bigText(
                 (if (changelog.isNotBlank()) "Novidades:\n$changelog\n\n" else "") +
-                    "Toque para baixar o novo APK."
+                    "Toque em \"Baixar agora\" para instalar automaticamente."
             ))
-            .setContentIntent(pendingOpen)
+            .addAction(R.drawable.ic_info, "Baixar agora", pendingUpdateNow)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()

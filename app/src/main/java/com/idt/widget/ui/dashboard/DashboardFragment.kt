@@ -1,7 +1,5 @@
 package com.idt.widget.ui.dashboard
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +19,7 @@ import com.idt.widget.data.model.UpdateInfo
 import com.idt.widget.data.remote.UpdateChecker
 import com.idt.widget.databinding.FragmentDashboardBinding
 import com.idt.widget.ui.ViewModelFactory
+import com.idt.widget.update.ApkUpdater
 import com.idt.widget.widget.WidgetScheduler
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -101,8 +100,28 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
         binding.cardUpdate.visibility = if (hasUpdate) View.VISIBLE else View.GONE
         if (hasUpdate && update != null) {
             binding.tvUpdateText.text = "Nova versão ${update.versionName} disponível"
-            binding.btnUpdate.setOnClickListener {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(update.apkUrl)))
+            binding.btnUpdate.setOnClickListener { downloadAndInstall(update.apkUrl, update.versionName) }
+        }
+    }
+
+    private fun downloadAndInstall(apkUrl: String, version: String) {
+        binding.btnUpdate.isEnabled = false
+        binding.tvUpdateText.text = "Baixando $version..."
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val updater = ApkUpdater(requireContext())
+                val apk = updater.download(apkUrl)
+                binding.tvUpdateText.text = "Instalando $version..."
+                val ok = updater.install(apk, version)
+                if (!ok) {
+                    binding.tvUpdateText.text = "Nova versão $version — abra manualmente"
+                    binding.btnUpdate.isEnabled = true
+                    Toast.makeText(requireContext(), "Falha na instalação automática", Toast.LENGTH_LONG).show()
+                }
+            } catch (e: Exception) {
+                binding.tvUpdateText.text = "Nova versão $version disponível"
+                binding.btnUpdate.isEnabled = true
+                Toast.makeText(requireContext(), "Erro ao baixar: ${e.message}", Toast.LENGTH_LONG).show()
             }
         }
     }

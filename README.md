@@ -83,18 +83,19 @@ Adicione o widget "IDT Status" à tela inicial segurando a área livre > Widgets
 
 ## Auto-atualização
 
-O app verifica `updates/update.json` (raw no GitHub) uma vez por dia. O manifesto aponta para o APK assinado publicado em **GitHub Releases**. Ao publicar uma nova versão:
+O app verifica `updates/update.json` (raw no GitHub) uma vez por dia. O manifesto aponta para o APK assinado publicado em **GitHub Releases**. A notificação e o banner do painel têm o botão **"Baixar agora"** que baixa o APK e instala automaticamente via PackageInstaller. Ao publicar uma nova versão:
 
 1. Atualize `versionCode`/`versionName` em `app/build.gradle.kts`.
-2. Commit + push.
-3. Crie a tag `vX.Y.Z` — o workflow `Build & Release` gera o APK e a release automaticamente:
+2. Atualize `updates/update.json` com a nova versão/URL.
+3. Commit + push.
+4. Crie a tag `vX.Y.Z` — o workflow `Build & Release` gera o APK **assinado** e a release automaticamente:
 
 ```bash
-git tag v2.0.0
-git push origin v2.0.0
+git tag v0.0.1
+git push origin v0.0.1
 ```
 
-O workflow também gera o `update.json` correspondente na release. O app detecta a versão nova, mostra banner no painel e notifica em segundo plano.
+O workflow decodifica o keystore dos secrets (`RELEASE_KEYSTORE_B64`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD`), assina o release APK e gera o `update.json` correspondente. O app detecta a versão nova e instala sobre a atual preservando dados.
 
 ## Distribuição
 
