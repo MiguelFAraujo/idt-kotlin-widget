@@ -6,8 +6,8 @@ local.properties
 *.iml
 .kotlin/
 
-# Gradle wrapper jar (regenerated)
-gradle/wrapper/gradle-wrapper.jar
+# Gradle wrapper jar (regenerated) — NOT ignored: CI needs it
+# gradle/wrapper/gradle-wrapper.jar
 
 # Signing
 *.keystore
