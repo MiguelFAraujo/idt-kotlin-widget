@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.idt.widget.app-mergeDebugResources-39:/values-h720dp-v13/values-h720dp-v13.xml",
+            "map": [
+                {
+                    "source": "/home/miguel/.gradle/caches/8.11.1/transforms/e32fce45a327e3e90d26a32be9b5ef7f/transformed/appcompat-1.6.1/res/values-h720dp-v13/values-h720dp-v13.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "66",
+                        "endOffsets": "117"
+                    }
+                }
+            ]
+        }
+    ]
+}

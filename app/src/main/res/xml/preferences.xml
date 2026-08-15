@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/category_general">
+        <SwitchPreferenceCompat
+            android:key="auto_refresh"
+            android:title="@string/auto_refresh"
+            android:summary="@string/auto_refresh_summary"
+            android:defaultValue="true" />
+
+        <ListPreference
+            android:key="refresh_interval"
+            android:title="@string/refresh_interval"
+            android:summary="@string/refresh_interval_summary"
+            android:entries="@array/refresh_interval_entries"
+            android:entryValues="@array/refresh_interval_values"
+            android:defaultValue="300" />
+
+        <SwitchPreferenceCompat
+            android:key="show_notifications"
+            android:title="@string/show_notifications"
+            android:summary="@string/show_notifications_summary"
+            android:defaultValue="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/category_appearance">
+        <ListPreference
+            android:key="theme"
+            android:title="@string/theme"
+            android:summary="@string/theme_summary"
+            android:entries="@array/theme_entries"
+            android:entryValues="@array/theme_values"
+            android:defaultValue="system" />
+
+        <SwitchPreferenceCompat
+            android:key="compact_view"
+            android:title="@string/compact_view"
+            android:summary="@string/compact_view_summary"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/category_widget">
+        <Preference
+            android:key="widget_help"
+            android:title="@string/widget_help"
+            android:summary="@string/widget_help_summary"
+            android:icon="@drawable/ic_info" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/category_about">
+        <Preference
+            android:key="about"
+            android:title="@string/about"
+            android:summary="@string/about_summary"
+            android:icon="@drawable/ic_info" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

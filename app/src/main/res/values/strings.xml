@@ -1,10 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">IDT Widget</string>
+    <string name="app_name">IDT Status</string>
     <string name="widget_name">IDT Status</string>
-    <string name="widget_description">Status dos servicos do IDT-Lab</string>
-    <string name="status_loading">carregando...</string>
-    <string name="status_ok">OK</string>
-    <string name="status_degraded">DEGRADADO</string>
-    <string name="status_down">DOWN</string>
+    <string name="widget_description">Status dos serviços do IDT-Lab</string>
+
+    <!-- Dashboard -->
+    <string name="refresh">Atualizar</string>
+    <string name="settings">Configurações</string>
+    <string name="endpoints">Endpoints</string>
+    <string name="action_about">Sobre</string>
+
+    <!-- Preferences -->
+    <string name="category_general">Geral</string>
+    <string name="category_appearance">Aparência</string>
+    <string name="category_widget">Widget</string>
+    <string name="category_about">Sobre</string>
+
+    <string name="auto_refresh">Atualização automática</string>
+    <string name="auto_refresh_summary">Verificar status periodicamente em segundo plano</string>
+    <string name="refresh_interval">Intervalo de atualização</string>
+    <string name="refresh_interval_summary">Tempo entre verificações automáticas</string>
+    <string name="show_notifications">Mostrar notificações</string>
+    <string name="show_notifications_summary">Notificar quando serviços caírem/voltarem</string>
+
+    <string name="theme">Tema</string>
+    <string name="theme_summary">Escolher tema da interface</string>
+    <string name="compact_view">Visualização compacta</string>
+    <string name="compact_view_summary">Mostrar mais serviços por tela</string>
+
+    <string name="widget_help">Como adicionar o widget</string>
+    <string name="widget_help_summary">Instruções para adicionar à tela inicial</string>
+
+    <string name="about">Sobre o IDT Status</string>
+    <string name="about_summary">Versão 1.0.0 - IDT-Lab</string>
+
+    <!-- Endpoints -->
+    <string name="endpoints_title">Endpoints Monitorados</string>
+    <string name="add_endpoint_title">Adicionar Endpoint</string>
+    <string name="endpoint_name">Nome</string>
+    <string name="endpoint_host">Host/IP</string>
+    <string name="endpoint_port">Porta</string>
+    <string name="endpoint_enabled">Ativo</string>
+    <string name="save">Salvar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="delete">Excluir</string>
+
+    <!-- Widget -->
+    <string name="widget_configure">Configurar Widget</string>
+
+    <!-- Fragment titles -->
+    <string name="settings_title">Configurações</string>
+    <string name="endpoints_title_frag">Endpoints</string>
+
 </resources>

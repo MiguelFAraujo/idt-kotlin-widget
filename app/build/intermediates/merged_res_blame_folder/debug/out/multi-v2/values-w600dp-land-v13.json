@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.idt.widget.app-mergeDebugResources-39:/values-w600dp-land-v13/values-w600dp-land-v13.xml",
+            "map": [
+                {
+                    "source": "/home/miguel/.gradle/caches/8.11.1/transforms/d2545317ff2e34ee27ad3ae860f229ed/transformed/material-1.11.0/res/values-w600dp-land-v13/values-w600dp-land-v13.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "54",
+                        "endOffsets": "105"
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -1,13 +1,10 @@
-#Sat Aug 15 08:25:35 BRT 2026
-path.3=classes2.dex
-path.2=3/classes.dex
-path.1=0/classes.dex
-path.0=classes.dex
-base.3=/home/miguel/idt-kotlin-widget/app/build/intermediates/dex/debug/mergeExtDexDebug/classes2.dex
+#Sat Aug 15 12:27:50 BRT 2026
 base.2=/home/miguel/idt-kotlin-widget/app/build/intermediates/dex/debug/mergeProjectDexDebug/3/classes.dex
+path.2=3/classes.dex
 base.1=/home/miguel/idt-kotlin-widget/app/build/intermediates/dex/debug/mergeProjectDexDebug/0/classes.dex
+path.1=0/classes.dex
 base.0=/home/miguel/idt-kotlin-widget/app/build/intermediates/dex/debug/mergeExtDexDebug/classes.dex
-renamed.3=classes4.dex
 renamed.2=classes3.dex
 renamed.1=classes2.dex
 renamed.0=classes.dex
+path.0=classes.dex
