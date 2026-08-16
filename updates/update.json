@@ -1,7 +1,7 @@
 {
-  "versionName": "0.0.5",
-  "versionCode": 5,
-  "apkUrl": "https://github.com/MiguelFAraujo/idt-kotlin-widget/releases/download/v0.0.5/IDT-Status-Widget-v0.0.5.apk",
-  "changelog": "Dashboard com atualização automática em tempo real (intervalo configurável); fluxo de escaneamento de host (Escaneia portas, mostra abertas e fechadas, marca as que quer monitorar); widget de status corrigido (mostra online + offline e atualiza ao tocar); layout das linhas de endpoint corrigido (host:porta em linha única).",
+  "versionName": "0.0.6",
+  "versionCode": 6,
+  "apkUrl": "https://github.com/MiguelFAraujo/idt-kotlin-widget/releases/download/v0.0.6/IDT-Status-Widget-v0.0.6.apk",
+  "changelog": "Dashboard com atualização automática a cada 10 segundos (tempo real).",
   "minVersionCode": 1
 }
