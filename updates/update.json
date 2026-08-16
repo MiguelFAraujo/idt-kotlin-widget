@@ -1,7 +1,7 @@
 {
-  "versionName": "0.3.2",
+  "versionName": "v0.3.2",
   "versionCode": 10,
   "apkUrl": "https://github.com/MiguelFAraujo/idt-kotlin-widget/releases/download/v0.3.2/IDT-Status-Widget-v0.3.2.apk",
-  "changelog": "Versao 0.3.2 do IDT Status Widget.",
+  "changelog": "Versao v0.3.2 do IDT Status Widget.",
   "minVersionCode": 1
 }
