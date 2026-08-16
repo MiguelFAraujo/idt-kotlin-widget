@@ -69,3 +69,15 @@ jobs:
           files: |
             dist/IDT-Status-Widget-${{ steps.version.outputs.tag }}.apk
             dist/update.json
+
+      - name: Publish Update Manifest to main
+        run: |
+          git fetch origin main
+          git checkout main
+          mkdir -p updates
+          cp dist/update.json updates/update.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add updates/update.json
+          git commit -m "chore: update manifest to ${{ steps.version.outputs.tag }}" || echo "No changes"
+          git push origin main
