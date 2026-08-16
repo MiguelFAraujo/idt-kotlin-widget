@@ -7,11 +7,13 @@ import com.idt.widget.data.model.ServiceCheckResult
 import com.idt.widget.domain.repository.HistoryRepository
 import com.idt.widget.domain.repository.ServiceRepository
 import com.idt.widget.update.UpdateInfo
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 
 data class DashboardUiState(
     val isLoading: Boolean = false,
@@ -29,6 +31,7 @@ data class DashboardUiState(
 class DashboardViewModel(
     private val repository: ServiceRepository,
     private val history: HistoryRepository,
+    private val checkTimeoutMs: Long = 20_000L,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DashboardUiState())
@@ -53,9 +56,12 @@ class DashboardViewModel(
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
             try {
                 val endpoints = repository.getEndpoints().filter { it.enabled }
-                val results = endpoints
-                    .map { async { repository.checkService(it) } }
-                    .awaitAll()
+                // Timeout global: nunca deixa o dashboard preso em "Verificando..."
+                val results = withTimeout(checkTimeoutMs) {
+                    endpoints
+                        .map { async { repository.checkService(it) } }
+                        .awaitAll()
+                }
                 history.record(results, System.currentTimeMillis())
                 val ok = results.count { it.ok }
                 _uiState.value = _uiState.value.copy(
@@ -67,6 +73,11 @@ class DashboardViewModel(
                     overallUptime = if (results.isEmpty()) 0f else ok.toFloat() / results.size,
                     avgLatencySeries = buildAvgLatency(results, lastStats),
                     lastUpdate = System.currentTimeMillis(),
+                )
+            } catch (e: TimeoutCancellationException) {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = "Tempo esgotado na verificação dos serviços",
                 )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(

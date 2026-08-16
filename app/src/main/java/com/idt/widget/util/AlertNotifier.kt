@@ -50,6 +50,11 @@ object AlertNotifier {
 
         val prefs = context.getSharedPreferences("idt_alerts", Context.MODE_PRIVATE)
 
+        // Respeita a opção "Mostrar notificações" das Configurações
+        val enabled = context.getSharedPreferences("idt_config", Context.MODE_PRIVATE)
+            .getBoolean("show_notifications", false)
+        if (!enabled) return
+
         // Estado anterior por endpoint (persistido)
         results.forEach { r ->
             val prev = prefs.getBoolean("state_${r.endpoint.id}", true)

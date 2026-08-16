@@ -27,4 +27,15 @@
         <item>light</item>
         <item>dark</item>
     </string-array>
+
+    <string-array name="patch_notes">
+        <item>Versão 1.0.0-beta.1</item>
+        <item>• Corrigido: painel parava de atualizar sozinho (auto-refresh contínuo).</item>
+        <item>• Corrigido: tela de Configurações fechava o app ao abrir.</item>
+        <item>• Corrigido: widget não carregava (checks mais rápidos + estado de carregamento).</item>
+        <item>• Novo: toque em um serviço mostra detalhes (latência, uptime, caminho).</item>
+        <item>• Novo: seção Sobre com créditos, repositório e site do projeto.</item>
+        <item>• Novo: notificações de serviço agora respeitam a opção "Mostrar notificações".</item>
+        <item>• Beta: projeto IDT-Lab — veja inteligenciadotopo.com.br/lab</item>
+    </string-array>
 </resources>

@@ -16,13 +16,17 @@ class UpdateCheckWorker(
         return try {
             val update = UpdateChecker().check(applicationContext) ?: return Result.success()
             if (update.isNewerThan(BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)) {
-                NotificationHelper.ensureChannels(applicationContext)
-                NotificationHelper.notifyUpdate(
-                    applicationContext,
-                    update.versionName,
-                    update.apkUrl,
-                    update.changelog,
-                )
+                val showNotifications = applicationContext.getSharedPreferences("idt_config", Context.MODE_PRIVATE)
+                    .getBoolean("show_notifications", false)
+                if (showNotifications) {
+                    NotificationHelper.ensureChannels(applicationContext)
+                    NotificationHelper.notifyUpdate(
+                        applicationContext,
+                        update.versionName,
+                        update.apkUrl,
+                        update.changelog,
+                    )
+                }
             }
             Result.success()
         } catch (e: Exception) {

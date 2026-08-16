@@ -7,6 +7,9 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.idt.widget.IDTApplication
 import com.idt.widget.util.AlertNotifier
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 
 class WidgetRefreshWorker(
     appContext: Context,
@@ -17,7 +20,9 @@ class WidgetRefreshWorker(
         return try {
             val app = applicationContext as IDTApplication
             val endpoints = app.container.serviceRepository.getEndpoints().filter { it.enabled }
-            val results = endpoints.map { app.container.serviceRepository.checkService(it) }
+            val results = coroutineScope {
+                endpoints.map { async { app.container.serviceRepository.checkService(it) } }.awaitAll()
+            }
             StatusData.write(applicationContext, results, System.currentTimeMillis())
 
             // Alerta autônomo de mudança de status

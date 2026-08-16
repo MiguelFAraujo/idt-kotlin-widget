@@ -33,7 +33,23 @@
     <string name="widget_help_summary">Instruções para adicionar à tela inicial</string>
 
     <string name="about">Sobre o IDT Status</string>
-    <string name="about_summary">Versão 1.0.0 - IDT-Lab</string>
+    <string name="about_summary">Versão e créditos do app</string>
+    <string name="about_version">Versão</string>
+    <string name="about_changelog">Notas da versão</string>
+    <string name="about_changelog_summary">O que mudou nesta atualização</string>
+    <string name="about_repo">Repositório (código-fonte)</string>
+    <string name="about_repo_summary">GitHub · IDT Status</string>
+    <string name="about_site">inteligenciadotopo.com.br</string>
+    <string name="about_site_summary">Projeto IDT-Lab do homelab</string>
+    <string name="changelog_title">Notas da versão %1$s</string>
+    <string name="service_detail_title">%1$s</string>
+    <string name="service_detail_status_online">Online · %1$sms</string>
+    <string name="service_detail_status_offline">Offline · %1$s</string>
+    <string name="service_detail_round">Caminho: %1$s</string>
+    <string name="service_detail_endpoint">%1$s:%2$d</string>
+    <string name="service_detail_uptime">Uptime (últimas verificações)</string>
+    <string name="service_detail_open">Abrir no navegador</string>
+    <string name="service_detail_close">Fechar</string>
 
     <!-- Connection/Onboarding -->
     <string name="connection_title">Conectar ao Servidor</string>
@@ -54,6 +70,8 @@
     <string name="connection_skip">Pular por enquanto</string>
     <string name="connection_fingerprint">Usar Impressão Digital</string>
     <string name="connection_fingerprint_summary">Autenticar com biometria ao acessar o app</string>
+    <string name="connection_open_webdav">Abrir WebDAV no navegador</string>
+    <string name="connection_open_webdav_summary">Acessar arquivos do servidor em outros apps (Nextcloud, etc.)</string>
 
     <!-- Endpoints -->
     <string name="endpoints_title">Endpoints Monitorados</string>

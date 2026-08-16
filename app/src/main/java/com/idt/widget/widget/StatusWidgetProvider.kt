@@ -22,6 +22,8 @@ class StatusWidgetProvider : AppWidgetProvider() {
         WidgetLiveService.start(context)
         // Ao adicionar/atualizar o widget, dispara um check real imediato
         WidgetScheduler.refreshNow(context)
+        // Garante o trabalho periódico mesmo se o processo reiniciar
+        WidgetScheduler.schedule(context, intervalMinutes = 15)
     }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -38,6 +40,7 @@ class StatusWidgetProvider : AppWidgetProvider() {
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
         WidgetLiveService.start(context)
+        WidgetScheduler.schedule(context, intervalMinutes = 15)
     }
 
     override fun onDisabled(context: Context) {
@@ -89,7 +92,7 @@ class StatusWidgetProvider : AppWidgetProvider() {
             val data = StatusData.read(context)
             val views = RemoteViews(context.packageName, R.layout.status_widget).apply {
                 setTextViewText(R.id.tvTitle, "IDT Lab")
-                setTextViewText(R.id.tvStatus, statusText(data.results))
+                setTextViewText(R.id.tvStatus, if (data.results.isEmpty()) "Carregando..." else statusText(data.results))
 
                 val openApp = PendingIntent.getActivity(
                     context, 0,

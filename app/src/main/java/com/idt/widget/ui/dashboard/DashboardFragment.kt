@@ -1,11 +1,14 @@
 package com.idt.widget.ui.dashboard
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -18,6 +21,7 @@ import com.idt.widget.IDTApplication
 import com.idt.widget.MainActivity
 import com.idt.widget.R
 import com.idt.widget.data.remote.UpdateChecker
+import com.idt.widget.databinding.DialogServiceDetailBinding
 import com.idt.widget.databinding.FragmentDashboardBinding
 import com.idt.widget.ui.ViewModelFactory
 import com.idt.widget.update.ApkUpdater
@@ -40,7 +44,7 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
 
-    private val adapter = ServiceCardAdapter()
+    private val adapter = ServiceCardAdapter { item -> showServiceDetail(item) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -63,28 +67,30 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
             }
         }
 
-        // Real-time auto-refresh based on config
+        // Real-time auto-refresh based on config (loop contínuo, ver RefreshScheduler)
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 val configFlow = (requireActivity().application as IDTApplication)
                     .container.configDataSource.observeConfig()
-                configFlow.collect { cfg ->
-                    if (cfg.autoRefresh) {
-                        val seconds = cfg.refreshIntervalSeconds.coerceAtLeast(10L)
-                        delay(seconds * 1000L)
-                        if (cfg.autoRefresh) viewModel.refresh()
-                    }
-                }
+                RefreshScheduler(
+                    configFlow = configFlow,
+                    scope = this,
+                    onRefresh = { viewModel.refresh() },
+                ).start()
             }
         }
 
-        // Live network speed
+        // Live network speed (ticker a cada segundo, resiliente a falhas)
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 while (true) {
-                    val s = NetworkSpeedMonitor.sample()
-                    binding.tvNetDown.text = "⬇ ${NetworkSpeedMonitor.format(s.rxBytesPerSec)}"
-                    binding.tvNetUp.text = "⬆ ${NetworkSpeedMonitor.format(s.txBytesPerSec)}"
+                    try {
+                        val s = NetworkSpeedMonitor.sample()
+                        binding.tvNetDown.text = "⬇ ${NetworkSpeedMonitor.format(s.rxBytesPerSec)}"
+                        binding.tvNetUp.text = "⬆ ${NetworkSpeedMonitor.format(s.txBytesPerSec)}"
+                    } catch (e: Exception) {
+                        Log.w("IDT_MAIN", "Erro no ticker de rede", e)
+                    }
                     delay(1000)
                 }
             }
@@ -219,6 +225,36 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
                 binding.btnUpdate.visibility = View.GONE
                 startAutoUpdate(u)
             }
+        }
+    }
+
+    private fun showServiceDetail(item: ServiceCardItem) {
+        val binding = DialogServiceDetailBinding.inflate(LayoutInflater.from(requireContext()))
+        binding.tvEndpoint.text = getString(R.string.service_detail_endpoint, item.host, item.port)
+        binding.tvStatus.text = if (item.ok) {
+            getString(R.string.service_detail_status_online, item.latencyMs)
+        } else {
+            getString(R.string.service_detail_status_offline, item.message)
+        }
+        binding.tvRound.text = getString(R.string.service_detail_round, item.roundUsed)
+        binding.uptimeStrip.setOkSeries(item.stats?.okSeries ?: emptyList())
+        if (item.ok) binding.tvOpen.visibility = View.VISIBLE else binding.tvOpen.visibility = View.GONE
+        binding.tvOpen.setOnClickListener {
+            openServiceUrl(item)
+        }
+
+        AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.service_detail_title, item.name))
+            .setView(binding.root)
+            .setPositiveButton(R.string.service_detail_close, null)
+            .show()
+    }
+
+    private fun openServiceUrl(item: ServiceCardItem) {
+        try {
+            val url = if (item.port == 443) "https://${item.host}" else "http://${item.host}:${item.port}"
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        } catch (_: Exception) {
         }
     }
 
