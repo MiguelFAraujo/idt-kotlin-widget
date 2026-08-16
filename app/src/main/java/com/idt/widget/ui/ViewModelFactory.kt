@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.idt.widget.IDTApplication
+import com.idt.widget.ui.connection.ConnectionViewModel
 import com.idt.widget.ui.dashboard.DashboardViewModel
 import com.idt.widget.ui.diagnostics.DiagnosticsViewModel
 import com.idt.widget.ui.endpoints.EndpointsViewModel
@@ -25,6 +26,8 @@ class ViewModelFactory(
                 DiagnosticsViewModel() as T
             modelClass.isAssignableFrom(ScanViewModel::class.java) ->
                 ScanViewModel(application.container.serviceRepository) as T
+            modelClass.isAssignableFrom(ConnectionViewModel::class.java) ->
+                ConnectionViewModel(application.container.configDataSource) as T
             else -> throw IllegalArgumentException("ViewModel desconhecido: ${modelClass.name}")
         }
     }

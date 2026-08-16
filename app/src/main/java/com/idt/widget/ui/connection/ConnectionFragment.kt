@@ -118,36 +118,73 @@ class ConnectionFragment : Fragment(R.layout.fragment_connection) {
     }
 
     private fun saveAndNavigate(serverUrl: String, services: List<DiscoveredService>) {
-        val username = binding.etUsername.text.toString().trim()
-        val password = binding.etPassword.text.toString().trim()
-        val useWebDav = binding.swUseWebDav.isChecked
-        val webDavPath = binding.etWebDavPath.text.toString().trim().ifBlank { "/" }
-        val useFingerprint = binding.swUseFingerprint.isChecked
+        try {
+            val username = binding.etUsername.text.toString().trim()
+            val password = binding.etPassword.text.toString().trim()
+            val useWebDav = binding.swUseWebDav.isChecked
+            val webDavPath = binding.etWebDavPath.text.toString().trim().ifBlank { "/" }
+            val useFingerprint = binding.swUseFingerprint.isChecked
 
-        if (useFingerprint && BiometricHelper.isBiometricAvailable(requireContext())) {
-            val biometricHelper = BiometricHelper(requireActivity())
-            biometricHelper.authenticateWithCallback(
-                reason = "Confirme sua identidade para salvar a configuração",
-                onSuccess = {
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        viewModel.saveConfiguration(serverUrl, username, password, useWebDav, webDavPath, useFingerprint)
-                        // Save discovered services to repository
-                        saveDiscoveredServices(services, username, password, useWebDav)
-                        Toast.makeText(requireContext(), "Configuração salva! Redirecionando...", Toast.LENGTH_SHORT).show()
-                        goToDashboard()
-                    }
-                },
-                onError = { error ->
-                    Toast.makeText(requireContext(), "Biometria necessária: $error", Toast.LENGTH_LONG).show()
+            if (useFingerprint && BiometricHelper.isBiometricAvailable(requireContext())) {
+                try {
+                    val biometricHelper = BiometricHelper(requireActivity())
+                    biometricHelper.authenticateWithCallback(
+                        reason = "Confirme sua identidade para salvar a configuração",
+                        onSuccess = {
+                            viewLifecycleOwner.lifecycleScope.launch {
+                                viewModel.saveConfiguration(serverUrl, username, password, useWebDav, webDavPath, useFingerprint)
+                                saveDiscoveredServices(services, username, password, useWebDav)
+                                safeToast("Configuração salva! Redirecionando...")
+                                safeNavigateToDashboard()
+                            }
+                        },
+                        onError = { error ->
+                            safeToast("Biometria: $error")
+                            // Fallback: save without biometric
+                            saveWithoutBiometric(serverUrl, username, password, useWebDav, webDavPath, useFingerprint, services)
+                        }
+                    )
+                } catch (e: Exception) {
+                    android.util.Log.e("ConnectionFragment", "Biometric error", e)
+                    safeToast("Erro na biometria, continuando...")
+                    saveWithoutBiometric(serverUrl, username, password, useWebDav, webDavPath, useFingerprint, services)
                 }
-            )
-        } else {
-            viewLifecycleOwner.lifecycleScope.launch {
+            } else {
+                saveWithoutBiometric(serverUrl, username, password, useWebDav, webDavPath, useFingerprint, services)
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("ConnectionFragment", "saveAndNavigate error", e)
+            safeToast("Erro ao salvar: ${e.message}")
+        }
+    }
+
+    private fun saveWithoutBiometric(serverUrl: String, username: String, password: String, useWebDav: Boolean, webDavPath: String, useFingerprint: Boolean, services: List<DiscoveredService>) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
                 viewModel.saveConfiguration(serverUrl, username, password, useWebDav, webDavPath, useFingerprint)
                 saveDiscoveredServices(services, username, password, useWebDav)
-                Toast.makeText(requireContext(), "Configuração salva! Redirecionando...", Toast.LENGTH_SHORT).show()
-                goToDashboard()
+                safeToast("Configuração salva! Redirecionando...")
+                safeNavigateToDashboard()
+            } catch (e: Exception) {
+                android.util.Log.e("ConnectionFragment", "Save error", e)
+                safeToast("Erro ao salvar: ${e.message}")
             }
+        }
+    }
+
+    private fun safeToast(msg: String) {
+        try {
+            Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            android.util.Log.e("ConnectionFragment", "Toast error", e)
+        }
+    }
+
+    private fun safeNavigateToDashboard() {
+        try {
+            findNavController().navigate(R.id.action_connection_to_dashboard)
+        } catch (e: Exception) {
+            android.util.Log.e("ConnectionFragment", "Navigation error", e)
         }
     }
 

@@ -33,14 +33,19 @@ class MainActivity : AppCompatActivity() {
         )
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfig)
 
-        // Check if connection is configured, if not stay on connection fragment
+        // Check if connection is configured - wait for navController to be ready
         lifecycleScope.launch {
-            val config = ConfigDataSource(this@MainActivity).getConfig()
-            if (!config.connectionConfigured) {
-                // Stay on connection fragment (it's the start destination)
-            } else {
-                // Navigate to dashboard
-                navController.navigate(R.id.action_connection_to_dashboard)
+            try {
+                val config = ConfigDataSource(this@MainActivity).getConfig()
+                if (!config.connectionConfigured) {
+                    // Stay on connection fragment (it's the start destination)
+                } else if (navController.currentDestination?.id != R.id.dashboardFragment) {
+                    // Navigate to dashboard only if not already there
+                    navController.navigate(R.id.action_connection_to_dashboard)
+                }
+            } catch (e: Exception) {
+                Log.e("MainActivity", "Config check failed", e)
+                // On error, stay on connection fragment
             }
         }
     }
