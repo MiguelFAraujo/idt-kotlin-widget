@@ -24,4 +24,6 @@ open class FakeServiceRepository : ServiceRepository {
     }
     override open suspend fun checkService(endpoint: ServiceEndpoint): ServiceCheckResult =
         ServiceCheckResult(endpoint, ok = endpoint.port != 1, roundUsed = "TCP", latencyMs = 5, message = "ok")
+
+    override suspend fun resyncWithConfiguredHost(): Int = endpoints.value.size
 }

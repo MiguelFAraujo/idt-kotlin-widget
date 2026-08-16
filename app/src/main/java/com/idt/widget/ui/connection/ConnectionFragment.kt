@@ -134,6 +134,7 @@ class ConnectionFragment : Fragment(R.layout.fragment_connection) {
                             viewLifecycleOwner.lifecycleScope.launch {
                                 viewModel.saveConfiguration(serverUrl, username, password, useWebDav, webDavPath, useFingerprint)
                                 saveDiscoveredServices(services, username, password, useWebDav)
+                                com.idt.widget.util.ConnectionSyncHelper.resyncAndRefresh(requireContext())
                                 safeToast("Configuração salva! Redirecionando...")
                                 safeNavigateToDashboard()
                             }
@@ -163,6 +164,8 @@ class ConnectionFragment : Fragment(R.layout.fragment_connection) {
             try {
                 viewModel.saveConfiguration(serverUrl, username, password, useWebDav, webDavPath, useFingerprint)
                 saveDiscoveredServices(services, username, password, useWebDav)
+                // Endereço novo => escaneia o host configurado, limpa cache e atualiza o widget.
+                com.idt.widget.util.ConnectionSyncHelper.resyncAndRefresh(requireContext())
                 safeToast("Configuração salva! Redirecionando...")
                 safeNavigateToDashboard()
             } catch (e: Exception) {

@@ -69,5 +69,11 @@ data class StatusData(
             context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
                 .edit().putString(KEY_JSON, o.toString()).apply()
         }
+
+        /** Apaga o cache de status. Usado quando o host muda: nada de resultado antigo na tela. */
+        fun clear(context: Context) {
+            context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                .edit().remove(KEY_JSON).apply()
+        }
     }
 }

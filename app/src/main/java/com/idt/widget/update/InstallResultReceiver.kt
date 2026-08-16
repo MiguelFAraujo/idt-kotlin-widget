@@ -22,8 +22,9 @@ data class UpdateInfo(
     val changelog: String,
     val timestamp: Long,
 ) {
+    /** versionCode é a fonte de verdade (nome pode variar entre "v1.0" e "1.0"). */
     fun isNewerThan(currentName: String, currentCode: Int): Boolean =
-        versionCode > currentCode && versionName != currentName
+        versionCode > currentCode
 }
 
 /**

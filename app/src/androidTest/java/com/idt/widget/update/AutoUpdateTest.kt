@@ -59,7 +59,7 @@ class AutoUpdateTest {
         serve(body) { url ->
             runBlocking {
                 val checker = UpdateChecker(url)
-                val update = checker.check()
+                val update = checker.check(ctx)
                 assertNotNull("manifest válido deveria retornar UpdateInfo", update)
                 update!!
                 assertTrue("0.0.7 deve ser mais nova que 0.0.6", update.isNewerThan("0.0.6", 6))
@@ -70,10 +70,11 @@ class AutoUpdateTest {
 
     @Test
     fun autoUpdateManifestInvalidoRetornaNull() {
+        val ctx = ApplicationProvider.getApplicationContext<Context>()
         serve("not json at all") { url ->
             runBlocking {
                 val checker = UpdateChecker(url)
-                assertNull("manifest inválido deveria retornar null", checker.check())
+                assertNull("manifest inválido deveria retornar null", checker.check(ctx))
             }
         }
     }

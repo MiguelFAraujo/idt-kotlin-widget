@@ -75,6 +75,12 @@
             android:summary="@string/show_notifications_summary"
             android:defaultValue="false" />
 
+        <SwitchPreferenceCompat
+            android:key="auto_update"
+            android:title="@string/auto_update"
+            android:summary="@string/auto_update_summary"
+            android:defaultValue="true" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/category_appearance">
@@ -102,6 +108,11 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/category_about">
+        <Preference
+            android:key="check_updates"
+            android:title="@string/check_updates"
+            android:summary="@string/check_updates_summary"
+            android:icon="@drawable/ic_info" />
         <Preference
             android:key="about_version"
             android:title="@string/about_version"

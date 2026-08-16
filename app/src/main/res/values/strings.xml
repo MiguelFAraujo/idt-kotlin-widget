@@ -23,6 +23,13 @@
     <string name="refresh_interval_summary">Tempo entre verificações automáticas</string>
     <string name="show_notifications">Mostrar notificações</string>
     <string name="show_notifications_summary">Notificar quando serviços caírem/voltarem</string>
+    <string name="auto_update">Auto-atualização</string>
+    <string name="auto_update_summary">Baixar e instalar novas versões automaticamente</string>
+    <string name="check_updates">Verificar atualização</string>
+    <string name="check_updates_summary">Procurar nova versão agora mesmo</string>
+    <string name="check_updates_done">Você está atualizado (v%1$s)</string>
+    <string name="check_updates_found">Nova versão %1$s disponível — baixando automaticamente</string>
+    <string name="check_updates_failed">Não foi possível verificar atualizações. Tente novamente.</string>
 
     <string name="theme">Tema</string>
     <string name="theme_summary">Escolher tema da interface</string>

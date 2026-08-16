@@ -108,7 +108,7 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
                 viewModel.onUpdateChecked(storedUpdate)
                 // Auto-inicia download/install se configurado
                 val cfg = (requireActivity().application as IDTApplication).container.configDataSource.getConfig()
-                if (cfg.autoRefresh) { // Reusa autoRefresh como "auto-update"
+                if (cfg.autoUpdate) {
                     startAutoUpdate(storedUpdate)
                 }
             } else {
@@ -117,7 +117,7 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
                 viewModel.onUpdateChecked(update)
                 if (update != null) {
                     val cfg = (requireActivity().application as IDTApplication).container.configDataSource.getConfig()
-                    if (cfg.autoRefresh) {
+                    if (cfg.autoUpdate) {
                         startAutoUpdate(update)
                     }
                 }

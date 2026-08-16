@@ -36,9 +36,13 @@ class ScanFragment : Fragment(R.layout.fragment_scan) {
         binding.recyclerPorts.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerPorts.adapter = adapter
 
-        // Garante host padrão e escaneia automaticamente ao abrir
+        // Garante host padrão e escaneia automaticamente ao abrir.
+        // O host vem do que o usuário configurou (nunca de um valor inventado);
+        // LAB_HOST fica só como dica de preenchimento quando ainda não há configuração.
+        val cfgHost = (requireActivity().application as IDTApplication)
+            .container.configDataSource.current().serverUrl.trim()
         if (binding.etHost.text?.isNullOrBlank() != false) {
-            binding.etHost.setText(ServiceCatalog.LAB_HOST)
+            binding.etHost.setText(cfgHost.ifBlank { ServiceCatalog.LAB_HOST })
         }
         viewModel.setHost(binding.etHost.text?.toString() ?: ServiceCatalog.LAB_HOST)
         viewModel.scanFull()

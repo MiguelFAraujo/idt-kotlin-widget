@@ -13,4 +13,5 @@ data class AppConfig(
     val compactView: Boolean = false,
     val connectionConfigured: Boolean = false,
     val useFingerprint: Boolean = false,
+    val autoUpdate: Boolean = true,
 )
