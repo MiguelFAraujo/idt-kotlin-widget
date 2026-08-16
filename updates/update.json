@@ -1,7 +1,7 @@
 {
-  "versionName": "1.0.0-beta.1",
+  "versionName": "v1.0.0-beta.1",
   "versionCode": 11,
   "apkUrl": "https://github.com/MiguelFAraujo/idt-kotlin-widget/releases/download/v1.0.0-beta.1/IDT-Status-Widget-v1.0.0-beta.1.apk",
-  "changelog": "Correcoes (auto-refresh, Configuracoes, widget), detalhes do servico no toque, secao Sobre, notas da versao e gate de notificacoes.",
+  "changelog": "Versao v1.0.0-beta.1 do IDT Status Widget.",
   "minVersionCode": 1
 }
