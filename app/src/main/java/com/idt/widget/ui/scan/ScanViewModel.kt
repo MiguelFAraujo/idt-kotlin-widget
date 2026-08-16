@@ -2,7 +2,9 @@ package com.idt.widget.ui.scan
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.idt.widget.data.remote.DiagnosticsPortScanner
 import com.idt.widget.data.remote.DiagnosticsTool
+import com.idt.widget.data.remote.PortScanner
 import com.idt.widget.domain.repository.ServiceRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,6 +20,7 @@ data class ScanUiState(
 
 class ScanViewModel(
     private val repository: ServiceRepository,
+    private val portScanner: PortScanner = DiagnosticsPortScanner,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ScanUiState())
@@ -38,9 +41,9 @@ class ScanViewModel(
         _uiState.value = _uiState.value.copy(scanning = true, error = null)
         viewModelScope.launch {
             try {
-                val open = DiagnosticsTool.scanPorts(host, DiagnosticsTool.COMMON_PORTS)
+                val open = portScanner.scanPorts(host, portScanner.commonPorts)
                 selection = open.associateWith { true }.toMutableMap()
-                val items = DiagnosticsTool.COMMON_PORTS.map { p ->
+                val items = portScanner.commonPorts.map { p ->
                     ScanPortItem(
                         port = p,
                         name = DiagnosticsTool.portName(p),

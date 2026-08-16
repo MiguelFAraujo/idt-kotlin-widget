@@ -35,6 +35,21 @@ class StatusWidgetProvider : AppWidgetProvider() {
     companion object {
         const val ACTION_REFRESH = "com.idt.widget.ACTION_REFRESH"
 
+        /** Formata o texto do widget. Lógica pura, testável em JVM. */
+        fun statusText(results: List<ServiceCheckResult>): String {
+            if (results.isEmpty()) return "Sem endpoints configurados"
+            val up = results.count { it.ok }
+            val down = results.size - up
+            val online = results.filter { it.ok }
+                .take(3).joinToString("") { " • ${it.endpoint.name}" }
+            val offline = results.filterNot { it.ok }
+                .take(2).joinToString("") { " ⛔${it.endpoint.name}" }
+            return "${up}/${results.size} online" +
+                online +
+                offline +
+                if (down > 2) " ⛔+${down - 2}" else ""
+        }
+
         /** Grava resultados frescos no cache do widget e atualiza os widgets na tela. */
         fun syncCache(context: Context, results: List<ServiceCheckResult>) {
             StatusData.write(context, results, System.currentTimeMillis())
@@ -49,21 +64,7 @@ class StatusWidgetProvider : AppWidgetProvider() {
             val data = StatusData.read(context)
             val views = RemoteViews(context.packageName, R.layout.status_widget).apply {
                 setTextViewText(R.id.tvTitle, "IDT Lab")
-                val statusText = if (data.results.isNotEmpty()) {
-                    val up = data.results.count { it.ok }
-                    val down = data.results.size - up
-                    val online = data.results.filter { it.ok }
-                        .take(3).joinToString("") { " • ${it.endpoint.name}" }
-                    val offline = data.results.filterNot { it.ok }
-                        .take(2).joinToString("") { " ⛔${it.endpoint.name}" }
-                    "${up}/${data.results.size} online" +
-                        online +
-                        offline +
-                        if (down > 2) " ⛔+${down - 2}" else ""
-                } else {
-                    "Sem endpoints configurados"
-                }
-                setTextViewText(R.id.tvStatus, statusText)
+                setTextViewText(R.id.tvStatus, statusText(data.results))
 
                 val openApp = PendingIntent.getActivity(
                     context, 0,

@@ -26,18 +26,25 @@ class UpdateChecker(
             client.newCall(request).execute().use { resp ->
                 if (!resp.isSuccessful) return@withContext null
                 val body = resp.body?.string() ?: return@withContext null
-                val o = JSONObject(body)
-                UpdateInfo(
-                    versionName = o.optString("versionName", ""),
-                    versionCode = o.optInt("versionCode", 0),
-                    apkUrl = o.optString("apkUrl", ""),
-                    changelog = o.optString("changelog", ""),
-                    timestamp = System.currentTimeMillis(),
-                )
+                parse(body)
             }
         } catch (e: Exception) {
             null
         }
+    }
+
+    /** Converte o corpo do manifest em [UpdateInfo]. Lógica pura, testável em JVM. */
+    fun parse(body: String): UpdateInfo? = try {
+        val o = JSONObject(body)
+        UpdateInfo(
+            versionName = o.optString("versionName", ""),
+            versionCode = o.optInt("versionCode", 0),
+            apkUrl = o.optString("apkUrl", ""),
+            changelog = o.optString("changelog", ""),
+            timestamp = System.currentTimeMillis(),
+        )
+    } catch (e: Exception) {
+        null
     }
 
     companion object {
