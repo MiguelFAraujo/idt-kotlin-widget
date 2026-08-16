@@ -11,4 +11,6 @@ data class AppConfig(
     val refreshIntervalSeconds: Long = 10,
     val showNotifications: Boolean = false,
     val compactView: Boolean = false,
+    val connectionConfigured: Boolean = false,
+    val useFingerprint: Boolean = false,
 )

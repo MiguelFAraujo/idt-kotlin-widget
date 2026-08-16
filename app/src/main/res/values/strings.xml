@@ -15,6 +15,7 @@
     <string name="category_appearance">Aparência</string>
     <string name="category_widget">Widget</string>
     <string name="category_about">Sobre</string>
+    <string name="category_connection">Conexão</string>
 
     <string name="auto_refresh">Atualização automática</string>
     <string name="auto_refresh_summary">Verificar status periodicamente em segundo plano</string>
@@ -34,6 +35,26 @@
     <string name="about">Sobre o IDT Status</string>
     <string name="about_summary">Versão 1.0.0 - IDT-Lab</string>
 
+    <!-- Connection/Onboarding -->
+    <string name="connection_title">Conectar ao Servidor</string>
+    <string name="connection_subtitle">Configure a conexão com seu servidor IDT-Lab</string>
+    <string name="connection_server_url">Endereço do Servidor</string>
+    <string name="connection_server_url_hint">Ex: https://seu-tailscale.ts.net ou http://192.168.1.9</string>
+    <string name="connection_username">Usuário</string>
+    <string name="connection_password">Senha</string>
+    <string name="connection_use_webdav">Usar WebDAV</string>
+    <string name="connection_webdav_path">Caminho WebDAV</string>
+    <string name="connection_test">Testar Conexão</string>
+    <string name="connection_testing">Testando...</string>
+    <string name="connection_success">Conexão bem-sucedida!</string>
+    <string name="connection_error">Erro na conexão: %1$s</string>
+    <string name="connection_discover">Descobrir Serviços</string>
+    <string name="connection_discovering">Descobrindo serviços...</string>
+    <string name="connection_discovered">%1$d serviços encontrados</string>
+    <string name="connection_skip">Pular por enquanto</string>
+    <string name="connection_fingerprint">Usar Impressão Digital</string>
+    <string name="connection_fingerprint_summary">Autenticar com biometria ao acessar o app</string>
+
     <!-- Endpoints -->
     <string name="endpoints_title">Endpoints Monitorados</string>
     <string name="add_endpoint_title">Adicionar Endpoint</string>
@@ -41,12 +62,19 @@
     <string name="endpoint_host">Host/IP</string>
     <string name="endpoint_port">Porta</string>
     <string name="endpoint_enabled">Ativo</string>
+    <string name="endpoint_require_auth">Requer autenticação</string>
+    <string name="endpoint_auth_type">Tipo de autenticação</string>
+    <string name="endpoint_username">Usuário</string>
+    <string name="endpoint_password">Senha</string>
+    <string name="endpoint_bearer_token">Bearer Token</string>
+    <string name="endpoint_xidt_token">X-IDT-Token</string>
+    <string name="endpoint_use_fingerprint">Usar impressão digital</string>
     <string name="save">Salvar</string>
     <string name="cancel">Cancelar</string>
     <string name="delete">Excluir</string>
 
     <!-- Scan -->
-    <string name="scan_title">Escanear host</string>
+    <string name="scan_title">Escanear Host</string>
     <string name="scan_btn">Escanear portas</string>
     <string name="scan_host_hint">Endereço do host (ex: seu Tailscale)</string>
     <string name="scan_summary_idle">Digite o endereço do host (ex: 100.104.13.42) e toque em Escanear.</string>

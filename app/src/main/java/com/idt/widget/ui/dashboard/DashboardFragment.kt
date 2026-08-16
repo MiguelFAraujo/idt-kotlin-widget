@@ -17,11 +17,12 @@ import com.idt.widget.BuildConfig
 import com.idt.widget.IDTApplication
 import com.idt.widget.MainActivity
 import com.idt.widget.R
-import com.idt.widget.data.model.UpdateInfo
 import com.idt.widget.data.remote.UpdateChecker
 import com.idt.widget.databinding.FragmentDashboardBinding
 import com.idt.widget.ui.ViewModelFactory
 import com.idt.widget.update.ApkUpdater
+import com.idt.widget.update.InstallResultReceiver
+import com.idt.widget.update.UpdateInfo
 import com.idt.widget.util.NetworkSpeedMonitor
 import com.idt.widget.widget.StatusWidgetProvider
 import kotlinx.coroutines.delay
@@ -55,28 +56,31 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
         (requireActivity() as? MainActivity)?.onRefreshRequested = { viewModel.refresh() }
         Log.d("IDT_MAIN", "DashboardFragment.onViewCreated: callback registrado")
 
+        // UI State from ViewModel
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state -> render(state) }
             }
         }
 
+        // Real-time auto-refresh based on config
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // Atualização em tempo real: respeita a config (autoRefresh + intervalo)
-                while (true) {
-                    val cfg = (requireActivity().application as IDTApplication)
-                        .container.configDataSource.getConfig()
-                    val seconds = cfg.refreshIntervalSeconds.coerceAtLeast(10L)
-                    delay(seconds * 1000L)
-                    if (cfg.autoRefresh) viewModel.refresh()
+                val configFlow = (requireActivity().application as IDTApplication)
+                    .container.configDataSource.observeConfig()
+                configFlow.collect { cfg ->
+                    if (cfg.autoRefresh) {
+                        val seconds = cfg.refreshIntervalSeconds.coerceAtLeast(10L)
+                        delay(seconds * 1000L)
+                        if (cfg.autoRefresh) viewModel.refresh()
+                    }
                 }
             }
         }
 
+        // Live network speed
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // Velocidade de rede ao vivo: atualiza o card a cada segundo
                 while (true) {
                     val s = NetworkSpeedMonitor.sample()
                     binding.tvNetDown.text = "⬇ ${NetworkSpeedMonitor.format(s.rxBytesPerSec)}"
@@ -86,12 +90,80 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
             }
         }
 
+        // Check for updates on start (once per session)
+        checkForUpdates()
+    }
+
+    private fun checkForUpdates() {
         viewLifecycleOwner.lifecycleScope.launch {
-            val update = UpdateChecker().check()
-            viewModel.onUpdateChecked(update)
-            // AUTO-UPDATE: se houver versão nova, baixa e instala sozinho
-            if (update != null && update.isNewerThan(BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)) {
-                autoDownloadAndInstall(update.apkUrl, update.versionName)
+            // Primeiro verifica se já tem update marcado (após reboot pós-instalação)
+            val storedUpdate = InstallResultReceiver.getUpdateInfo(requireContext())
+            if (storedUpdate != null) {
+                viewModel.onUpdateChecked(storedUpdate)
+                // Auto-inicia download/install se configurado
+                val cfg = (requireActivity().application as IDTApplication).container.configDataSource.getConfig()
+                if (cfg.autoRefresh) { // Reusa autoRefresh como "auto-update"
+                    startAutoUpdate(storedUpdate)
+                }
+            } else {
+                // Busca no servidor
+                val update = UpdateChecker().check(requireContext())
+                viewModel.onUpdateChecked(update)
+                if (update != null) {
+                    val cfg = (requireActivity().application as IDTApplication).container.configDataSource.getConfig()
+                    if (cfg.autoRefresh) {
+                        startAutoUpdate(update)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun startAutoUpdate(update: UpdateInfo) {
+        binding.cardUpdate.visibility = View.VISIBLE
+        binding.btnUpdate.visibility = View.GONE
+        binding.tvUpdateText.text = "Baixando ${update.versionName} automaticamente..."
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val updater = ApkUpdater(requireContext())
+
+                // Verifica permissão de instalação
+                if (!ApkUpdater.canInstallPackages(requireContext())) {
+                    binding.tvUpdateText.text = "Permita instalação de fontes desconhecidas"
+                    binding.btnUpdate.visibility = View.VISIBLE
+                    binding.btnUpdate.text = "Abrir configurações"
+                    binding.btnUpdate.setOnClickListener {
+                        ApkUpdater.openInstallPermissionSettings(requireContext())
+                    }
+                    return@launch
+                }
+
+                val result = updater.downloadAndInstall(update.apkUrl)
+
+                if (result.success) {
+                    binding.tvUpdateText.text = "Instalando ${update.versionName}... Aguarde"
+                    binding.btnUpdate.visibility = View.GONE
+                    // InstallResultReceiver vai notificar e limpar flag
+                } else {
+                    binding.tvUpdateText.text = "Falha: ${result.error}"
+                    binding.btnUpdate.visibility = View.VISIBLE
+                    binding.btnUpdate.text = "Tentar novamente"
+                    binding.btnUpdate.setOnClickListener {
+                        binding.btnUpdate.visibility = View.GONE
+                        binding.tvUpdateText.text = "Baixando ${update.versionName} automaticamente..."
+                        startAutoUpdate(update)
+                    }
+                }
+            } catch (e: Exception) {
+                binding.tvUpdateText.text = "Erro: ${e.message}"
+                binding.btnUpdate.visibility = View.VISIBLE
+                binding.btnUpdate.text = "Tentar novamente"
+                binding.btnUpdate.setOnClickListener {
+                    binding.btnUpdate.visibility = View.GONE
+                    binding.tvUpdateText.text = "Baixando ${update.versionName} automaticamente..."
+                    startAutoUpdate(update)
+                }
             }
         }
     }
@@ -137,62 +209,15 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
     private fun renderUpdateBanner(update: UpdateInfo?) {
         val hasUpdate = update != null &&
             update.isNewerThan(BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
+
         binding.cardUpdate.visibility = if (hasUpdate) View.VISIBLE else View.GONE
-        if (hasUpdate && update != null && binding.btnUpdate.visibility != View.GONE) {
-            binding.tvUpdateText.text = "Nova versão ${update.versionName} disponível"
+
+        if (hasUpdate && binding.btnUpdate.visibility != View.GONE) {
+            val u = update!!
+            binding.tvUpdateText.text = "Nova versão ${u.versionName} disponível"
             binding.btnUpdate.setOnClickListener {
                 binding.btnUpdate.visibility = View.GONE
-                autoDownloadAndInstall(update.apkUrl, update.versionName)
-            }
-        }
-    }
-
-    private fun autoDownloadAndInstall(apkUrl: String, version: String) {
-        binding.cardUpdate.visibility = View.VISIBLE
-        binding.btnUpdate.visibility = View.GONE
-        binding.tvUpdateText.text = "Baixando $version automaticamente..."
-        viewLifecycleOwner.lifecycleScope.launch {
-            try {
-                val updater = ApkUpdater(requireContext())
-                val apk = updater.download(apkUrl)
-                binding.tvUpdateText.text = "Instalando $version..."
-                // Instala via PackageInstaller sem confirmação manual extra
-                val ok = updater.installViaPackageInstaller(apk, version)
-                if (!ok) {
-                    // Fallback: tela de instalação do sistema
-                    updater.install(apk, version)
-                }
-            } catch (e: Exception) {
-                binding.tvUpdateText.text = "Falha na atualização: ${e.message}"
-                binding.btnUpdate.visibility = View.VISIBLE
-                binding.btnUpdate.text = "Tentar novamente"
-                binding.btnUpdate.setOnClickListener {
-                    binding.btnUpdate.visibility = View.GONE
-                    binding.tvUpdateText.text = "Baixando $version automaticamente..."
-                    autoDownloadAndInstall(apkUrl, version)
-                }
-            }
-        }
-    }
-
-    private fun downloadAndInstall(apkUrl: String, version: String) {
-        binding.btnUpdate.isEnabled = false
-        binding.tvUpdateText.text = "Baixando $version..."
-        viewLifecycleOwner.lifecycleScope.launch {
-            try {
-                val updater = ApkUpdater(requireContext())
-                val apk = updater.download(apkUrl)
-                binding.tvUpdateText.text = "Instalando $version..."
-                val ok = updater.install(apk, version)
-                if (!ok) {
-                    binding.tvUpdateText.text = "Nova versão $version — abra manualmente"
-                    binding.btnUpdate.isEnabled = true
-                    Toast.makeText(requireContext(), "Falha na instalação automática", Toast.LENGTH_LONG).show()
-                }
-            } catch (e: Exception) {
-                binding.tvUpdateText.text = "Nova versão $version disponível"
-                binding.btnUpdate.isEnabled = true
-                Toast.makeText(requireContext(), "Erro ao baixar: ${e.message}", Toast.LENGTH_LONG).show()
+                startAutoUpdate(u)
             }
         }
     }

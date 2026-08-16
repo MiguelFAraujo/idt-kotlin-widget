@@ -10,10 +10,10 @@ import org.junit.Test
 class ServiceCheckerTest {
 
     private val checker = ServiceChecker(
-        serverUser = "admin",
-        serverPass = "secret",
-        bearerToken = "tok-123",
-        xIdtToken = "x-tok",
+        defaultUser = "admin",
+        defaultPass = "secret",
+        defaultBearerToken = "tok-123",
+        defaultXIdtToken = "x-tok",
     )
 
     @Test

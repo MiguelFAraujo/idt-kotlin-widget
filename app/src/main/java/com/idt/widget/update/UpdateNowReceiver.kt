@@ -28,11 +28,9 @@ class UpdateNowReceiver : BroadcastReceiver() {
             try {
                 updateNotification(appContext, 0)
                 val updater = ApkUpdater(appContext)
-                val apk = updater.download(apkUrl)
-                updateNotification(appContext, 90)
-                val ok = updater.installViaPackageInstaller(apk, version)
+                val result = updater.downloadAndInstall(apkUrl)
                 updateNotification(appContext, 100)
-                notifyResult(appContext, version, ok)
+                notifyResult(appContext, version, result.success)
             } catch (e: Exception) {
                 notifyResult(appContext, version, ok = false)
             } finally {

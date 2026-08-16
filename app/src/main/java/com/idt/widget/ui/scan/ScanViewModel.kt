@@ -131,6 +131,7 @@ class ScanViewModel(
                             port = item.port,
                             enabled = true,
                             requireAuth = false,
+                            authType = com.idt.widget.data.model.ServiceEndpoint.AuthType.NONE,
                         )
                     )
                 }

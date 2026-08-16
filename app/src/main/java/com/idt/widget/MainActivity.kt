@@ -5,10 +5,13 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
+import com.idt.widget.data.local.ConfigDataSource
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,6 +32,17 @@ class MainActivity : AppCompatActivity() {
             setOf(R.id.dashboardFragment)
         )
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfig)
+
+        // Check if connection is configured, if not stay on connection fragment
+        lifecycleScope.launch {
+            val config = ConfigDataSource(this@MainActivity).getConfig()
+            if (!config.connectionConfigured) {
+                // Stay on connection fragment (it's the start destination)
+            } else {
+                // Navigate to dashboard
+                navController.navigate(R.id.action_connection_to_dashboard)
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

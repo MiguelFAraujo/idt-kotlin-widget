@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.idt.widget.data.history.EndpointStats
 import com.idt.widget.data.model.ServiceCheckResult
-import com.idt.widget.data.model.UpdateInfo
 import com.idt.widget.domain.repository.HistoryRepository
 import com.idt.widget.domain.repository.ServiceRepository
+import com.idt.widget.update.UpdateInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.async

@@ -32,6 +32,8 @@ class ConfigDataSource(context: Context) {
             .putLong("refresh_interval", config.refreshIntervalSeconds)
             .putBoolean("show_notifications", config.showNotifications)
             .putBoolean("compact_view", config.compactView)
+            .putBoolean("connection_configured", config.connectionConfigured)
+            .putBoolean("use_fingerprint", config.useFingerprint)
             .apply()
         configFlow.value = config
     }
@@ -51,5 +53,7 @@ class ConfigDataSource(context: Context) {
         refreshIntervalSeconds = prefs.getLong("refresh_interval", 10),
         showNotifications = prefs.getBoolean("show_notifications", false),
         compactView = prefs.getBoolean("compact_view", false),
+        connectionConfigured = prefs.getBoolean("connection_configured", false),
+        useFingerprint = prefs.getBoolean("use_fingerprint", false),
     )
 }

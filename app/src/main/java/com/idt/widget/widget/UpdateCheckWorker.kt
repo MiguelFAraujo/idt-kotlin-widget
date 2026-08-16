@@ -14,7 +14,7 @@ class UpdateCheckWorker(
 
     override suspend fun doWork(): Result {
         return try {
-            val update = UpdateChecker().check() ?: return Result.success()
+            val update = UpdateChecker().check(applicationContext) ?: return Result.success()
             if (update.isNewerThan(BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)) {
                 NotificationHelper.ensureChannels(applicationContext)
                 NotificationHelper.notifyUpdate(

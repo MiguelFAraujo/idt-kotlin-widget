@@ -47,8 +47,8 @@ class ServiceRepositoryImpl(
     override suspend fun checkService(endpoint: ServiceEndpoint): ServiceCheckResult {
         val cfg = config.getConfig()
         val checker = ServiceChecker(
-            serverUser = cfg.serverUser,
-            serverPass = cfg.serverPass,
+            defaultUser = cfg.serverUser,
+            defaultPass = cfg.serverPass,
         )
         return checker.check(endpoint)
     }
@@ -64,6 +64,12 @@ class ServiceRepositoryImpl(
                     .put("port", e.port)
                     .put("enabled", e.enabled)
                     .put("requireAuth", e.requireAuth)
+                    .put("authType", e.authType.name)
+                    .put("username", e.username)
+                    .put("password", e.password)
+                    .put("bearerToken", e.bearerToken)
+                    .put("xIdtToken", e.xIdtToken)
+                    .put("useFingerprint", e.useFingerprint)
             )
         }
         prefs.edit().putString("endpoints_json", arr.toString()).apply()
@@ -84,6 +90,12 @@ class ServiceRepositoryImpl(
                     port = o.optInt("port"),
                     enabled = o.optBoolean("enabled", true),
                     requireAuth = o.optBoolean("requireAuth", false),
+                    authType = ServiceEndpoint.AuthType.valueOf(o.optString("authType", "NONE")),
+                    username = o.optString("username", ""),
+                    password = o.optString("password", ""),
+                    bearerToken = o.optString("bearerToken", ""),
+                    xIdtToken = o.optString("xIdtToken", ""),
+                    useFingerprint = o.optBoolean("useFingerprint", false),
                 )
             }
         } catch (e: Exception) {

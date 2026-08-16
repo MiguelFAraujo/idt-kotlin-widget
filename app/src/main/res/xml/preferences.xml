@@ -1,6 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <PreferenceCategory android:title="@string/category_connection">
+        <EditTextPreference
+            android:key="server_url"
+            android:title="@string/connection_server_url"
+            android:summary="Endereço do servidor IDT-Lab"
+            android:dialogTitle="@string/connection_server_url"
+            android:inputType="textUri"
+            android:defaultValue="http://192.168.1.9" />
+
+        <EditTextPreference
+            android:key="server_user"
+            android:title="@string/connection_username"
+            android:summary="Usuário para autenticação"
+            android:dialogTitle="@string/connection_username"
+            android:inputType="text"
+            android:defaultValue="" />
+
+        <EditTextPreference
+            android:key="server_pass"
+            android:title="@string/connection_password"
+            android:summary="Senha para autenticação"
+            android:dialogTitle="@string/connection_password"
+            android:inputType="textPassword"
+            android:defaultValue="" />
+
+        <SwitchPreferenceCompat
+            android:key="use_webdav"
+            android:title="@string/connection_use_webdav"
+            android:summary="Usar WebDAV para descoberta de serviços (Nextcloud, etc.)"
+            android:defaultValue="false" />
+
+        <EditTextPreference
+            android:key="server_path"
+            android:title="@string/connection_webdav_path"
+            android:summary="Caminho WebDAV (ex: /remote.php/dav/files/usuario/)"
+            android:dialogTitle="@string/connection_webdav_path"
+            android:inputType="text"
+            android:defaultValue="/" />
+
+        <SwitchPreferenceCompat
+            android:key="use_fingerprint"
+            android:title="@string/connection_fingerprint"
+            android:summary="@string/connection_fingerprint_summary"
+            android:defaultValue="false" />
+
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/category_general">
         <SwitchPreferenceCompat
             android:key="auto_refresh"

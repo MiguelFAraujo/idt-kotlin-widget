@@ -26,10 +26,10 @@ import java.util.concurrent.TimeUnit
  *   R1 anônimo · R2 Basic user/pass · R3 Bearer token · R4 WebDAV PROPFIND Basic · R5 custom header X-IDT-Token
  */
 class ServiceChecker(
-    private val serverUser: String,
-    private val serverPass: String,
-    private val bearerToken: String = "",
-    private val xIdtToken: String = "",
+    private val defaultUser: String = "",
+    private val defaultPass: String = "",
+    private val defaultBearerToken: String = "",
+    private val defaultXIdtToken: String = "",
 ) {
     private val tcpTimeoutMs = 3000
     private val httpTimeoutMs = 3000
@@ -94,28 +94,45 @@ class ServiceChecker(
         val scheme = if (tls) "https" else "http"
         val base = "$scheme://${endpoint.host}:${endpoint.port}"
 
-        val anon = runRound(base, endpoint, "R1", headersOf("R1"))
+        val anon = runRound(base, endpoint, "R1", headersOf(endpoint, "R1"))
         if (anon != null) return anon
 
         if (endpoint.requireAuth) {
             for (round in listOf("R2", "R3", "R4", "R5")) {
-                val out = runRound(base, endpoint, round, headersOf(round))
+                val out = runRound(base, endpoint, round, headersOf(endpoint, round))
                 if (out != null) return out
             }
         }
         return null
     }
 
-    private fun headersOf(round: String): Map<String, String> = when (round) {
-        "R2" -> if (serverUser.isNotEmpty()) mapOf("Authorization" to Credentials.basic(serverUser, serverPass)) else emptyMap()
-        "R3" -> if (bearerToken.isNotEmpty()) mapOf("Authorization" to "Bearer $bearerToken") else emptyMap()
-        "R4" -> if (serverUser.isNotEmpty()) {
+    private fun headersOf(endpoint: ServiceEndpoint, round: String): Map<String, String> = when (round) {
+        "R2" -> if (endpoint.username.isNotEmpty() && endpoint.authType == ServiceEndpoint.AuthType.BASIC)
+            mapOf("Authorization" to Credentials.basic(endpoint.username, endpoint.password))
+            else if (defaultUser.isNotEmpty())
+                mapOf("Authorization" to Credentials.basic(defaultUser, defaultPass))
+            else emptyMap()
+        "R3" -> if (endpoint.bearerToken.isNotEmpty() && endpoint.authType == ServiceEndpoint.AuthType.BEARER)
+            mapOf("Authorization" to "Bearer ${endpoint.bearerToken}")
+            else if (defaultBearerToken.isNotEmpty())
+                mapOf("Authorization" to "Bearer $defaultBearerToken")
+            else emptyMap()
+        "R4" -> if (endpoint.username.isNotEmpty() && endpoint.authType == ServiceEndpoint.AuthType.WEBDAV) {
             mapOf(
-                "Authorization" to Credentials.basic(serverUser, serverPass),
+                "Authorization" to Credentials.basic(endpoint.username, endpoint.password),
+                "Depth" to "0",
+            )
+        } else if (defaultUser.isNotEmpty()) {
+            mapOf(
+                "Authorization" to Credentials.basic(defaultUser, defaultPass),
                 "Depth" to "0",
             )
         } else emptyMap()
-        "R5" -> if (xIdtToken.isNotEmpty()) mapOf("X-IDT-Token" to xIdtToken) else emptyMap()
+        "R5" -> if (endpoint.xIdtToken.isNotEmpty() && endpoint.authType == ServiceEndpoint.AuthType.CUSTOM)
+            mapOf("X-IDT-Token" to endpoint.xIdtToken)
+            else if (defaultXIdtToken.isNotEmpty())
+                mapOf("X-IDT-Token" to defaultXIdtToken)
+            else emptyMap()
         else -> emptyMap()
     }
 

@@ -20,8 +20,8 @@ android {
         applicationId = "com.idt.widget"
         minSdk = 26
         targetSdk = 35
-        versionCode = 7
-        versionName = "0.0.7"
+        versionCode = 6
+        versionName = "0.0.6"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -66,6 +66,9 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
+
+    // Biometric/Fingerprint
+    implementation("androidx.biometric:biometric:1.2.0-alpha04")
 
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")

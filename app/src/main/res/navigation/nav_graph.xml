@@ -2,7 +2,16 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/dashboardFragment">
+    app:startDestination="@id/connectionFragment">
+
+    <fragment
+        android:id="@+id/connectionFragment"
+        android:name="com.idt.widget.ui.connection.ConnectionFragment"
+        android:label="@string/connection_title">
+        <action
+            android:id="@+id/action_connection_to_dashboard"
+            app:destination="@id/dashboardFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/dashboardFragment"

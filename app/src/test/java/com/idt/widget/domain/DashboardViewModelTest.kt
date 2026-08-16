@@ -1,6 +1,6 @@
 package com.idt.widget.domain
 
-import com.idt.widget.data.model.UpdateInfo
+import com.idt.widget.update.UpdateInfo
 import com.idt.widget.ui.dashboard.DashboardViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -75,7 +75,7 @@ class DashboardViewModelTest {
     fun `onUpdateChecked propaga atualizacao disponivel`() = runTest(dispatcher.scheduler) {
         val vm = DashboardViewModel(FakeServiceRepository(), FakeHistoryRepository())
         dispatcher.scheduler.advanceUntilIdle()
-        vm.onUpdateChecked(UpdateInfo("0.0.6", 6, "http://x/a.apk"))
+        vm.onUpdateChecked(UpdateInfo("0.0.6", 6, "http://x/a.apk", "", 0L))
         assertEquals("0.0.6", vm.uiState.value.updateAvailable?.versionName)
     }
 }
