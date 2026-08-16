@@ -11,4 +11,5 @@ interface ServiceRepository {
     suspend fun deleteEndpoint(id: String)
     suspend fun checkService(endpoint: ServiceEndpoint): ServiceCheckResult
     fun observeEndpoints(): Flow<List<ServiceEndpoint>>
+    suspend fun resyncWithConfiguredHost(): Int
 }

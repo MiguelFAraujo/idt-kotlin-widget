@@ -4,7 +4,9 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.idt.widget.BuildConfig
+import com.idt.widget.data.local.ConfigDataSource
 import com.idt.widget.data.remote.UpdateChecker
+import com.idt.widget.update.UpdateNowReceiver
 import com.idt.widget.util.NotificationHelper
 
 class UpdateCheckWorker(
@@ -16,16 +18,24 @@ class UpdateCheckWorker(
         return try {
             val update = UpdateChecker().check(applicationContext) ?: return Result.success()
             if (update.isNewerThan(BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)) {
-                val showNotifications = applicationContext.getSharedPreferences("idt_config", Context.MODE_PRIVATE)
-                    .getBoolean("show_notifications", false)
-                if (showNotifications) {
-                    NotificationHelper.ensureChannels(applicationContext)
-                    NotificationHelper.notifyUpdate(
-                        applicationContext,
-                        update.versionName,
-                        update.apkUrl,
-                        update.changelog,
-                    )
+                val cfg = ConfigDataSource(applicationContext).current()
+                if (cfg.autoUpdate) {
+                    // Auto-atualização ligada: baixa e instala em segundo plano.
+                    UpdateNowReceiver.trigger(applicationContext, update.apkUrl, update.versionName)
+                } else {
+                    // Sem auto-atualização: avisa para instalar com um toque.
+                    val showNotifications = applicationContext.getSharedPreferences(
+                        "idt_config", Context.MODE_PRIVATE
+                    ).getBoolean("show_notifications", false)
+                    if (showNotifications) {
+                        NotificationHelper.ensureChannels(applicationContext)
+                        NotificationHelper.notifyUpdate(
+                            applicationContext,
+                            update.versionName,
+                            update.apkUrl,
+                            update.changelog,
+                        )
+                    }
                 }
             }
             Result.success()

@@ -18,6 +18,9 @@ class StatusWidgetProvider : AppWidgetProvider() {
         for (id in appWidgetIds) {
             updateWidget(context, appWidgetManager, id)
         }
+        // Re-sincroniza com o host configurado (scan real) ao adicionar o widget,
+        // garantindo que o status reflete o endereço atual do usuário.
+        com.idt.widget.util.ConnectionSyncHelper.resyncAndRefresh(context)
         // Widget ao vivo: serviço de primeiro plano mantém atualização por segundo
         WidgetLiveService.start(context)
         // Ao adicionar/atualizar o widget, dispara um check real imediato

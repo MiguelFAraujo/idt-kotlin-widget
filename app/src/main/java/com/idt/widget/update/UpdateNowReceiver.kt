@@ -80,5 +80,15 @@ class UpdateNowReceiver : BroadcastReceiver() {
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
             )
         }
+
+        /** Dispara o download+instalação imediatamente (mesmo fluxo da notificação). */
+        fun trigger(context: Context, apkUrl: String, version: String) {
+            val intent = Intent(context, UpdateNowReceiver::class.java)
+                .setAction(ACTION)
+                .putExtra(EXTRA_URL, apkUrl)
+                .putExtra(EXTRA_VERSION, version)
+                .addFlags(Intent.FLAG_RECEIVER_FOREGROUND)
+            context.sendBroadcast(intent)
+        }
     }
 }

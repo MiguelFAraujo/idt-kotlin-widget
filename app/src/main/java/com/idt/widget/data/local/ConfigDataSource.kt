@@ -18,6 +18,9 @@ class ConfigDataSource(context: Context) {
 
     fun observeConfig(): Flow<AppConfig> = configFlow.asStateFlow()
 
+    /** Leitura síncrona do valor corrente (StateFlow). Evita bloqueio em contextos não-suspend. */
+    fun current(): AppConfig = configFlow.value
+
     suspend fun getConfig(): AppConfig = withContext(Dispatchers.IO) { configFlow.value }
 
     suspend fun saveConfig(config: AppConfig) = withContext(Dispatchers.IO) {
@@ -34,6 +37,7 @@ class ConfigDataSource(context: Context) {
             .putBoolean("compact_view", config.compactView)
             .putBoolean("connection_configured", config.connectionConfigured)
             .putBoolean("use_fingerprint", config.useFingerprint)
+            .putBoolean("auto_update", config.autoUpdate)
             .apply()
         configFlow.value = config
     }
@@ -55,5 +59,6 @@ class ConfigDataSource(context: Context) {
         compactView = prefs.getBoolean("compact_view", false),
         connectionConfigured = prefs.getBoolean("connection_configured", false),
         useFingerprint = prefs.getBoolean("use_fingerprint", false),
+        autoUpdate = prefs.getBoolean("auto_update", true),
     )
 }

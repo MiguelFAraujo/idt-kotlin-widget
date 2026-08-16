@@ -39,7 +39,13 @@ class UpdateCheckerTest {
     }
 
     @Test
-    fun `isNewerThan falso quando nome igual`() {
+    fun `isNewerThan verdadeiro quando versionCode maior e nome igual`() {
+        val info = checker.parse("""{"versionName":"0.0.6","versionCode":6}""")!!
+        assertTrue("hotfix com mesmo nome e code maior deve contar", info.isNewerThan("0.0.6", 5))
+    }
+
+    @Test
+    fun `isNewerThan falso quando versao identica`() {
         val info = checker.parse("""{"versionName":"0.0.6","versionCode":6}""")!!
         assertFalse(info.isNewerThan("0.0.6", 6))
     }

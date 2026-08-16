@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
@@ -13,7 +14,11 @@ import androidx.preference.SwitchPreferenceCompat
 import com.idt.widget.BuildConfig
 import com.idt.widget.R
 import com.idt.widget.data.local.ConfigDataSource
+import com.idt.widget.data.remote.UpdateChecker
+import com.idt.widget.update.UpdateNowReceiver
 import com.idt.widget.util.ChangelogHelper
+import com.idt.widget.util.ConnectionSyncHelper
+import com.idt.widget.util.NotificationHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -46,6 +51,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
             openConfiguredWebDav()
             true
         }
+        findPreference<Preference>("check_updates")?.setOnPreferenceClickListener {
+            checkForUpdates()
+            true
+        }
 
         // Sync preference display values from the app config, guarding against a destroyed host.
         val fragment = this
@@ -60,6 +69,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     findPreference<EditTextPreference>("server_path")?.setText(config.serverPath)
                     findPreference<SwitchPreferenceCompat>("use_webdav")?.isChecked = config.useWebDav
                     findPreference<SwitchPreferenceCompat>("use_fingerprint")?.isChecked = config.useFingerprint
+                    findPreference<SwitchPreferenceCompat>("auto_update")?.isChecked = config.autoUpdate
                 }
             }
         }
@@ -83,8 +93,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         showNotifications = prefs.getBoolean("show_notifications", currentConfig.showNotifications),
                         compactView = prefs.getBoolean("compact_view", currentConfig.compactView),
                         useFingerprint = prefs.getBoolean("use_fingerprint", currentConfig.useFingerprint),
+                        autoUpdate = prefs.getBoolean("auto_update", currentConfig.autoUpdate),
                     )
                     configDataSource.saveConfig(newConfig)
+                    // Endereço ou credenciais mudaram => re-sincroniza com o host configurado
+                    // e limpa o cache de status (nada de resultado inventado/antigo na tela).
+                    ConnectionSyncHelper.resyncAndRefresh(requireContext())
                 } catch (_: Exception) {
                     // Never crash the UI on a config write failure.
                 }
@@ -111,6 +125,37 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
+    /** Verificação manual de atualização: mostra resultado imediato no toast. */
+    private fun checkForUpdates() {
+        val activity = activity ?: return
+        val appContext = activity.applicationContext
+        lifecycleScope.launch(Dispatchers.IO) {
+            val result = try {
+                UpdateChecker().check(appContext)
+            } catch (e: Exception) {
+                null
+            }
+            val isUpdate = result != null &&
+                result.isNewerThan(BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
+            val autoUpdate = ConfigDataSource(appContext).current().autoUpdate
+            activity.runOnUiThread {
+                if (!isAdded) return@runOnUiThread
+                val message = if (isUpdate) {
+                    val update = result!!
+                    if (autoUpdate) {
+                        UpdateNowReceiver.trigger(appContext, update.apkUrl, update.versionName)
+                    } else {
+                        NotificationHelper.notifyUpdate(appContext, update.versionName, update.apkUrl, update.changelog)
+                    }
+                    getString(R.string.check_updates_found, update.versionName)
+                } else {
+                    getString(R.string.check_updates_done, BuildConfig.VERSION_NAME)
+                }
+                Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
     private fun openConfiguredWebDav() {
         lifecycleScope.launch(Dispatchers.IO) {
             val config = ConfigDataSource(requireActivity().applicationContext).getConfig()
@@ -127,6 +172,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             "server_url", "server_user", "server_pass", "server_path",
             "use_webdav", "use_fingerprint", "auto_refresh",
             "refresh_interval", "show_notifications", "compact_view",
+            "auto_update",
         )
     }
 }
