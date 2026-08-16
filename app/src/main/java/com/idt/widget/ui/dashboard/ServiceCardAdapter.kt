@@ -21,20 +21,25 @@ data class ServiceCardItem(
     val stats: EndpointStats?,
 )
 
-class ServiceCardAdapter : ListAdapter<ServiceCardItem, ServiceCardAdapter.VH>(DIFF) {
+class ServiceCardAdapter(
+    private val onClick: (ServiceCardItem) -> Unit = {},
+) : ListAdapter<ServiceCardItem, ServiceCardAdapter.VH>(DIFF) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val binding = ItemServiceCardBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
         )
-        return VH(binding)
+        return VH(binding, onClick)
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class VH(private val binding: ItemServiceCardBinding) : RecyclerView.ViewHolder(binding.root) {
+    class VH(
+        private val binding: ItemServiceCardBinding,
+        private val onClick: (ServiceCardItem) -> Unit,
+    ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ServiceCardItem) {
             binding.tvName.text = item.name
             binding.tvEndpoint.text = "${item.host}:${item.port}"
@@ -57,6 +62,8 @@ class ServiceCardAdapter : ListAdapter<ServiceCardItem, ServiceCardAdapter.VH>(D
             } else {
                 binding.uptimeStripSmall.setOkSeries(emptyList())
             }
+
+            binding.root.setOnClickListener { onClick(item) }
         }
     }
 

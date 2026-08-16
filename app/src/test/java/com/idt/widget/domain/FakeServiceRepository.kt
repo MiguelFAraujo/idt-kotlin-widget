@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class FakeServiceRepository : ServiceRepository {
+open class FakeServiceRepository : ServiceRepository {
     private val endpoints = MutableStateFlow(ServiceCatalog.defaultServices.take(3))
 
     override fun observeEndpoints(): Flow<List<ServiceEndpoint>> = endpoints.asStateFlow()
@@ -22,6 +22,6 @@ class FakeServiceRepository : ServiceRepository {
     override suspend fun deleteEndpoint(id: String) {
         endpoints.value = endpoints.value.filterNot { it.id == id }
     }
-    override suspend fun checkService(endpoint: ServiceEndpoint): ServiceCheckResult =
+    override open suspend fun checkService(endpoint: ServiceEndpoint): ServiceCheckResult =
         ServiceCheckResult(endpoint, ok = endpoint.port != 1, roundUsed = "TCP", latencyMs = 5, message = "ok")
 }

@@ -46,6 +46,12 @@
             android:summary="@string/connection_fingerprint_summary"
             android:defaultValue="false" />
 
+        <Preference
+            android:key="open_webdav"
+            android:title="@string/connection_open_webdav"
+            android:summary="@string/connection_open_webdav_summary"
+            android:icon="@drawable/ic_info" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/category_general">
@@ -97,9 +103,24 @@
 
     <PreferenceCategory android:title="@string/category_about">
         <Preference
-            android:key="about"
-            android:title="@string/about"
+            android:key="about_version"
+            android:title="@string/about_version"
             android:summary="@string/about_summary"
+            android:icon="@drawable/ic_info" />
+        <Preference
+            android:key="about_changelog"
+            android:title="@string/about_changelog"
+            android:summary="@string/about_changelog_summary"
+            android:icon="@drawable/ic_info" />
+        <Preference
+            android:key="about_repo"
+            android:title="@string/about_repo"
+            android:summary="@string/about_repo_summary"
+            android:icon="@drawable/ic_info" />
+        <Preference
+            android:key="about_site"
+            android:title="@string/about_site"
+            android:summary="@string/about_site_summary"
             android:icon="@drawable/ic_info" />
     </PreferenceCategory>
 

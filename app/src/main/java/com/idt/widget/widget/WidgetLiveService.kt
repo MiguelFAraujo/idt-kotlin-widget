@@ -66,13 +66,14 @@ class WidgetLiveService : Service() {
         checkJob?.cancel()
 
         val manager = AppWidgetManager.getInstance(this)
-        val ids = manager.getAppWidgetIds(
-            ComponentName(this, StatusWidgetProvider::class.java)
-        )
 
         // Tick de 1s: atualiza tempo desde o último check + velocidade de rede
         tickerJob = scope.launch {
             while (isActive) {
+                // Re-lê os widgets a cada tick para incluir widgets adicionados depois
+                val ids = manager.getAppWidgetIds(
+                    ComponentName(this@WidgetLiveService, StatusWidgetProvider::class.java)
+                )
                 val since = System.currentTimeMillis() - lastCheckAt
                 val speed = NetworkSpeedMonitor.sample()
                 ids.forEach { id ->
@@ -163,7 +164,12 @@ class WidgetLiveService : Service() {
                 val intent = Intent(context, WidgetLiveService::class.java)
                 context.startForegroundService(intent)
             } catch (e: Exception) {
-                // Em Android 12+ o background pode negar; o widget onUpdate também re-tenta
+                // Em Android 12+ o background pode negar (widget adicionado pela launcher):
+                // mesmo assim garante um check real imediato via WorkManager.
+                try {
+                    WidgetScheduler.refreshNow(context)
+                } catch (_: Exception) {
+                }
             }
         }
 
