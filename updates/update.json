@@ -1,7 +1,7 @@
 {
-  "versionName": "v1.0.1",
-  "versionCode": 12,
-  "apkUrl": "https://github.com/MiguelFAraujo/idt-kotlin-widget/releases/download/v1.0.1/IDT-Status-Widget-v1.0.1.apk",
-  "changelog": "Versao v1.0.1 do IDT Status Widget.",
+  "versionName": "v1.0.2",
+  "versionCode": 13,
+  "apkUrl": "https://github.com/MiguelFAraujo/idt-kotlin-widget/releases/download/v1.0.2/IDT-Status-Widget-v1.0.2.apk",
+  "changelog": "Correcoes de warnings, melhoria de estabilidade no ApkUpdater.",
   "minVersionCode": 1
 }

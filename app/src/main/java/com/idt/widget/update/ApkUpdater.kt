@@ -76,8 +76,9 @@ class ApkUpdater(private val context: Context) {
                         val status = cursor.getInt(statusCol)
                         when (status) {
                             DownloadManager.STATUS_SUCCESSFUL -> {
-                                val localUri = cursor.getString(localUriCol)
-                                return@withContext DownloadResult(File(Uri.parse(localUri).path))
+                                val localUri = cursor.getString(localUriCol) ?: ""
+                                val path = Uri.parse(localUri).path ?: ""
+                                return@withContext DownloadResult(File(path))
                             }
                             DownloadManager.STATUS_FAILED -> {
                                 val reason = cursor.getInt(reasonCol)
@@ -92,7 +93,7 @@ class ApkUpdater(private val context: Context) {
             // Fallback: download direto com OkHttp
             return@withContext downloadDirect(apkUrl)
         }
-        // Should never reach here, but Kotlin needs it
+        @Suppress("UNREACHABLE_CODE")
         DownloadResult(null, "Erro desconhecido")
     }
 
@@ -120,6 +121,7 @@ class ApkUpdater(private val context: Context) {
 
         // Verifica se o APK é válido e assinado corretamente
         val pm = context.packageManager
+        @Suppress("DEPRECATION")
         val packageInfo = pm.getPackageArchiveInfo(apkFile.absolutePath, PackageManager.GET_SIGNATURES)
         if (packageInfo == null || packageInfo.packageName != BuildConfig.APPLICATION_ID) {
             return@withContext InstallResult(false, "APK inválido ou package name diferente")
@@ -200,7 +202,7 @@ class ApkUpdater(private val context: Context) {
     suspend fun downloadAndInstall(apkUrl: String): InstallResult {
         val download = downloadWithManager(apkUrl)
         if (download.file == null) return InstallResult(false, download.error)
-        return install(download.file!!)
+        return install(download.file)
     }
 
     companion object {
