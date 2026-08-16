@@ -17,11 +17,23 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Download Update Manifest from Release
-        uses: actions/download-artifact@v4
-        with:
-          name: update-manifest
-          path: .
+      - name: Build Update Manifest
+        id: manifest
+        run: |
+          VERSION_NAME=$(grep 'versionName' app/build.gradle.kts | head -1 | sed "s/.*versionName = \"\\(.*\\)\".*/\\1/")
+          VERSION_CODE=$(grep 'versionCode' app/build.gradle.kts | head -1 | sed 's/.*versionCode = \\(.*\\).*/\\1/')
+          APK_URL="https://github.com/${{ github.repository }}/releases/download/${{ github.event.release.tag_name }}/app-release.apk"
+          cat > update.json <<EOF
+          {
+            "versionName": "$VERSION_NAME",
+            "versionCode": $VERSION_CODE,
+            "apkUrl": "$APK_URL",
+            "changelog": "Release ${{ github.event.release.tag_name }}",
+            "minVersionCode": 1
+          }
+          EOF
+          echo "Generated update.json:"
+          cat update.json
 
       - name: Configure Git
         run: |
