@@ -1,0 +1,43 @@
+name: Publish Update Manifest
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  publish-update-json:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download Update Manifest from Release
+        uses: actions/download-artifact@v4
+        with:
+          name: update-manifest
+          path: .
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Update update.json on main branch
+        run: |
+          # Switch to main branch
+          git checkout main
+
+          # Copy update.json to updates/ folder
+          mkdir -p updates
+          cp update.json updates/update.json
+
+          # Commit and push
+          git add updates/update.json
+          git commit -m "chore: update manifest to ${{ github.event.release.tag_name }}" || echo "No changes"
+          git push origin main
