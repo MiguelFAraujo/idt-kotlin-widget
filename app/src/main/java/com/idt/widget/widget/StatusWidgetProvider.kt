@@ -18,6 +18,8 @@ class StatusWidgetProvider : AppWidgetProvider() {
         for (id in appWidgetIds) {
             updateWidget(context, appWidgetManager, id)
         }
+        // Widget ao vivo: serviço de primeiro plano mantém atualização por segundo
+        WidgetLiveService.start(context)
         // Ao adicionar/atualizar o widget, dispara um check real imediato
         WidgetScheduler.refreshNow(context)
     }
@@ -26,9 +28,32 @@ class StatusWidgetProvider : AppWidgetProvider() {
         super.onReceive(context, intent)
         when (intent.action) {
             ACTION_REFRESH -> {
-                // Tap no widget = check real, não apenas re-ler cache velho
+                // Tap no widget = check real + mantém ticker ao vivo
+                WidgetLiveService.start(context)
                 WidgetScheduler.refreshNow(context)
             }
+        }
+    }
+
+    override fun onEnabled(context: Context) {
+        super.onEnabled(context)
+        WidgetLiveService.start(context)
+    }
+
+    override fun onDisabled(context: Context) {
+        super.onDisabled(context)
+        WidgetLiveService.stop(context)
+    }
+
+    override fun onDeleted(context: Context, appWidgetIds: IntArray) {
+        super.onDeleted(context, appWidgetIds)
+        // Se não restarem widgets, para o serviço ao vivo
+        val manager = AppWidgetManager.getInstance(context)
+        val remaining = manager.getAppWidgetIds(
+            ComponentName(context, StatusWidgetProvider::class.java)
+        )
+        if (remaining.isEmpty()) {
+            WidgetLiveService.stop(context)
         }
     }
 

@@ -1,6 +1,9 @@
 package com.idt.widget.data.remote
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -50,11 +53,40 @@ object DiagnosticsTool {
             }
         }
 
-    /** Escaneia uma lista de portas em paralelo e retorna as abertas. */
-    suspend fun scanPorts(host: String, ports: List<Int>): List<Int> =
-        withContext(Dispatchers.IO) {
-            ports.filter { tcpProbe(host, it, timeoutMs = 1500) }.sorted()
+    /**
+     * Escaneia portas em paralelo (chunks) e retorna as abertas, com progresso
+     * reportado por [onProgress] (contador de portas testadas). Cada probe tem
+     * timeout curto (1.2s) para não travar o scan inteiro.
+     */
+    suspend fun scanPorts(
+        host: String,
+        ports: List<Int>,
+        timeoutMs: Int = 1200,
+        concurrency: Int = 48,
+        onProgress: (done: Int, total: Int) -> Unit = { _, _ -> },
+    ): List<Int> = withContext(Dispatchers.IO) {
+        val open = java.util.Collections.synchronizedList(mutableListOf<Int>())
+        val done = java.util.concurrent.atomic.AtomicInteger(0)
+        val chunks = ports.chunked(concurrency)
+        for (chunk in chunks) {
+            coroutineScope {
+                chunk.map { p ->
+                    async {
+                        if (tcpProbe(host, p, timeoutMs)) {
+                            synchronized(open) { open.add(p) }
+                        }
+                        onProgress(done.incrementAndGet(), ports.size)
+                    }
+                }.awaitAll()
+            }
         }
+        open.sorted()
+    }
+
+    /** Faixa completa de scan: portas conhecidas (1-1024) + portas comuns de aplicações. */
+    val FULL_SCAN_PORTS: List<Int> by lazy {
+        (1..1024).toList() + COMMON_PORTS.filter { it > 1024 }
+    }
 
     val COMMON_PORTS: List<Int> = listOf(
         21, 22, 53, 80, 443, 3306, 5432, 8080, 8443, 9000,

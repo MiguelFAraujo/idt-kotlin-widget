@@ -32,7 +32,6 @@ class UpdateChecker(
             null
         }
     }
-
     /** Converte o corpo do manifest em [UpdateInfo]. Lógica pura, testável em JVM. */
     fun parse(body: String): UpdateInfo? = try {
         val o = JSONObject(body)

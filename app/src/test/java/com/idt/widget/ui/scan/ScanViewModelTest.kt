@@ -36,8 +36,18 @@ class ScanViewModelTest {
         private val openPorts: Set<Int>,
     ) : PortScanner {
         override val commonPorts: List<Int> = listOf(22, 80, 443, 8080)
-        override suspend fun scanPorts(host: String, ports: List<Int>): List<Int> =
-            ports.filter { it in openPorts }
+        override val fullScanPorts: List<Int> = commonPorts
+
+        override suspend fun scanPorts(
+            host: String,
+            ports: List<Int>,
+            timeoutMs: Int,
+            concurrency: Int,
+            onProgress: (done: Int, total: Int) -> Unit,
+        ): List<Int> {
+            onProgress(ports.size, ports.size)
+            return ports.filter { it in openPorts }
+        }
     }
 
     private fun scanVm(openPorts: Set<Int> = emptySet(), repo: FakeServiceRepository = FakeServiceRepository()) =
@@ -115,6 +125,33 @@ class ScanViewModelTest {
 
         assertNotNull(vm.uiState.value.error)
         assertFalse(vm.uiState.value.scanning)
+    }
+
+    @Test
+    fun `scan reporta progresso ate 100 porcento`() = runTest(dispatcher.scheduler) {
+        val vm = scanVm(openPorts = setOf(22))
+        vm.setHost("100.104.13.42")
+        vm.scan()
+        dispatcher.scheduler.advanceUntilIdle()
+
+        val state = vm.uiState.value
+        assertEquals(100, state.progress)
+        assertEquals(4, state.scanned)
+        assertEquals(4, state.total)
+    }
+
+    @Test
+    fun `scanFull usa faixa completa de portas`() = runTest(dispatcher.scheduler) {
+        val vm = scanVm(openPorts = setOf(22, 443))
+        vm.setHost("100.104.13.42")
+        vm.scanFull()
+        dispatcher.scheduler.advanceUntilIdle()
+
+        val state = vm.uiState.value
+        assertTrue(state.fullScan)
+        assertFalse(state.scanning)
+        assertEquals(4, state.total)
+        assertEquals(setOf(22, 443), state.ports.filter { it.open }.map { it.port }.toSet())
     }
 
     @Test

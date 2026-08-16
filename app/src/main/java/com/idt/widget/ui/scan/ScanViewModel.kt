@@ -12,9 +12,13 @@ import kotlinx.coroutines.launch
 
 data class ScanUiState(
     val scanning: Boolean = false,
+    val fullScan: Boolean = false,
     val host: String = "",
     val ports: List<ScanPortItem> = emptyList(),
     val selectedCount: Int = 0,
+    val progress: Int = 0,          // 0..100
+    val scanned: Int = 0,           // portas testadas
+    val total: Int = 0,             // portas no alvo
     val error: String? = null,
 )
 
@@ -32,18 +36,50 @@ class ScanViewModel(
         _uiState.value = _uiState.value.copy(host = host)
     }
 
+    /** Escaneia a faixa completa (1-1024 + portas comuns). Chamado ao abrir. */
+    fun scanFull() {
+        val host = _uiState.value.host.trim()
+        if (host.isEmpty()) {
+            _uiState.value = _uiState.value.copy(error = "Informe o endereço (ex: seu Tailscale)")
+            return
+        }
+        launchScan(host, portScanner.fullScanPorts, fullScan = true)
+    }
+
     fun scan() {
         val host = _uiState.value.host.trim()
         if (host.isEmpty()) {
             _uiState.value = _uiState.value.copy(error = "Informe o endereço (ex: seu Tailscale)")
             return
         }
-        _uiState.value = _uiState.value.copy(scanning = true, error = null)
+        launchScan(host, portScanner.commonPorts, fullScan = false)
+    }
+
+    private fun launchScan(host: String, ports: List<Int>, fullScan: Boolean) {
+        _uiState.value = _uiState.value.copy(
+            scanning = true,
+            fullScan = fullScan,
+            error = null,
+            progress = 0,
+            scanned = 0,
+            total = ports.size,
+        )
         viewModelScope.launch {
             try {
-                val open = portScanner.scanPorts(host, portScanner.commonPorts)
+                val open = portScanner.scanPorts(
+                    host, ports,
+                    timeoutMs = if (fullScan) 800 else 1200,
+                    concurrency = 64,
+                    onProgress = { done, total ->
+                        _uiState.value = _uiState.value.copy(
+                            progress = (done * 100 / total.coerceAtLeast(1)),
+                            scanned = done,
+                            total = total,
+                        )
+                    },
+                )
                 selection = open.associateWith { true }.toMutableMap()
-                val items = portScanner.commonPorts.map { p ->
+                val items = ports.map { p ->
                     ScanPortItem(
                         port = p,
                         name = DiagnosticsTool.portName(p),
@@ -54,6 +90,8 @@ class ScanViewModel(
                 _uiState.value = _uiState.value.copy(
                     scanning = false,
                     ports = items,
+                    scanned = ports.size,
+                    progress = 100,
                     selectedCount = items.count { it.selected },
                 )
             } catch (e: Exception) {

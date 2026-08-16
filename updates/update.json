@@ -1,7 +1,7 @@
 {
-  "versionName": "0.0.6",
-  "versionCode": 6,
-  "apkUrl": "https://github.com/MiguelFAraujo/idt-kotlin-widget/releases/download/v0.0.6/IDT-Status-Widget-v0.0.6.apk",
-  "changelog": "Dashboard com atualização automática a cada 10 segundos (tempo real).",
+  "versionName": "0.0.7",
+  "versionCode": 7,
+  "apkUrl": "https://github.com/MiguelFAraujo/idt-kotlin-widget/releases/download/v0.0.7/IDT-Status-Widget-v0.0.7.apk",
+  "changelog": "Widget ao vivo (ticker 1s + velocidade up/down), scan completo de 1047 portas com progresso, painel com velocidade de rede em tempo real e auto-update.",
   "minVersionCode": 1
 }

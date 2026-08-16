@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.idt.widget.IDTApplication
 import com.idt.widget.R
+import com.idt.widget.data.remote.ServiceCatalog
 import com.idt.widget.databinding.FragmentScanBinding
 import com.idt.widget.ui.ViewModelFactory
 import kotlinx.coroutines.launch
@@ -35,6 +36,13 @@ class ScanFragment : Fragment(R.layout.fragment_scan) {
         binding.recyclerPorts.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerPorts.adapter = adapter
 
+        // Garante host padrão e escaneia automaticamente ao abrir
+        if (binding.etHost.text?.isNullOrBlank() != false) {
+            binding.etHost.setText(ServiceCatalog.LAB_HOST)
+        }
+        viewModel.setHost(binding.etHost.text?.toString() ?: ServiceCatalog.LAB_HOST)
+        viewModel.scanFull()
+
         binding.btnScan.setOnClickListener {
             viewModel.setHost(binding.etHost.text?.toString() ?: "")
             viewModel.scan()
@@ -56,12 +64,16 @@ class ScanFragment : Fragment(R.layout.fragment_scan) {
     private fun render(state: ScanUiState) {
         binding.btnScan.isEnabled = !state.scanning
         binding.btnScan.text = if (state.scanning) "Escaneando..." else getString(R.string.scan_btn)
+
         binding.btnAddSelected.isEnabled = state.selectedCount > 0
         binding.btnAddSelected.text =
             getString(R.string.scan_add_selected, state.selectedCount)
+
         binding.tvSummary.text = when {
             state.error != null -> state.error
-            state.scanning -> "Escaneando ${state.host}..."
+            state.scanning -> "Escaneando ${state.host}... ${
+                state.scanned
+            }/${state.total} portas (${state.progress}%)"
             state.ports.isEmpty() -> getString(R.string.scan_summary_idle)
             else -> getString(
                 R.string.scan_summary_done,
@@ -70,6 +82,8 @@ class ScanFragment : Fragment(R.layout.fragment_scan) {
                 state.ports.size,
             )
         }
+        binding.tvSummary.visibility = View.VISIBLE
+
         adapter.submitList(state.ports)
     }
 

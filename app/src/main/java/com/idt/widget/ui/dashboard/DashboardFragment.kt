@@ -22,6 +22,7 @@ import com.idt.widget.data.remote.UpdateChecker
 import com.idt.widget.databinding.FragmentDashboardBinding
 import com.idt.widget.ui.ViewModelFactory
 import com.idt.widget.update.ApkUpdater
+import com.idt.widget.util.NetworkSpeedMonitor
 import com.idt.widget.widget.StatusWidgetProvider
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -74,8 +75,24 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // Velocidade de rede ao vivo: atualiza o card a cada segundo
+                while (true) {
+                    val s = NetworkSpeedMonitor.sample()
+                    binding.tvNetDown.text = "⬇ ${NetworkSpeedMonitor.format(s.rxBytesPerSec)}"
+                    binding.tvNetUp.text = "⬆ ${NetworkSpeedMonitor.format(s.txBytesPerSec)}"
+                    delay(1000)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
             val update = UpdateChecker().check()
             viewModel.onUpdateChecked(update)
+            // AUTO-UPDATE: se houver versão nova, baixa e instala sozinho
+            if (update != null && update.isNewerThan(BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)) {
+                autoDownloadAndInstall(update.apkUrl, update.versionName)
+            }
         }
     }
 
@@ -121,9 +138,40 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
         val hasUpdate = update != null &&
             update.isNewerThan(BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
         binding.cardUpdate.visibility = if (hasUpdate) View.VISIBLE else View.GONE
-        if (hasUpdate && update != null) {
+        if (hasUpdate && update != null && binding.btnUpdate.visibility != View.GONE) {
             binding.tvUpdateText.text = "Nova versão ${update.versionName} disponível"
-            binding.btnUpdate.setOnClickListener { downloadAndInstall(update.apkUrl, update.versionName) }
+            binding.btnUpdate.setOnClickListener {
+                binding.btnUpdate.visibility = View.GONE
+                autoDownloadAndInstall(update.apkUrl, update.versionName)
+            }
+        }
+    }
+
+    private fun autoDownloadAndInstall(apkUrl: String, version: String) {
+        binding.cardUpdate.visibility = View.VISIBLE
+        binding.btnUpdate.visibility = View.GONE
+        binding.tvUpdateText.text = "Baixando $version automaticamente..."
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val updater = ApkUpdater(requireContext())
+                val apk = updater.download(apkUrl)
+                binding.tvUpdateText.text = "Instalando $version..."
+                // Instala via PackageInstaller sem confirmação manual extra
+                val ok = updater.installViaPackageInstaller(apk, version)
+                if (!ok) {
+                    // Fallback: tela de instalação do sistema
+                    updater.install(apk, version)
+                }
+            } catch (e: Exception) {
+                binding.tvUpdateText.text = "Falha na atualização: ${e.message}"
+                binding.btnUpdate.visibility = View.VISIBLE
+                binding.btnUpdate.text = "Tentar novamente"
+                binding.btnUpdate.setOnClickListener {
+                    binding.btnUpdate.visibility = View.GONE
+                    binding.tvUpdateText.text = "Baixando $version automaticamente..."
+                    autoDownloadAndInstall(apkUrl, version)
+                }
+            }
         }
     }
 
