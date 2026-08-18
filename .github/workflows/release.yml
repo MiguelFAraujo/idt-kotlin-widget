@@ -55,12 +55,26 @@ jobs:
           mkdir -p dist
           cp "app/build/outputs/apk/release/$SIGNED_APK" dist/IDT-Status-Widget-${{ steps.version.outputs.tag }}.apk
 
+      - name: Generate changelog
+        id: changelog
+        run: |
+          VERSION_TAG="${{ steps.version.outputs.tag }}"
+          PREV_TAG=$(git tag --sort=-v:refname | grep -A1 "$VERSION_TAG" | tail -1)
+          if [ -z "$PREV_TAG" ] || [ "$PREV_TAG" = "$VERSION_TAG" ]; then
+            CHANGELOG=$(git log --oneline -10 --pretty=format:"• %s" "$VERSION_TAG")
+          else
+            CHANGELOG=$(git log --oneline --pretty=format:"• %s" "$PREV_TAG..$VERSION_TAG")
+          fi
+          # Escape for JSON
+          CHANGELOG_ESCAPED=$(echo "$CHANGELOG" | sed ':a;N;$!ba;s/\n/\\n/g' | sed 's/"/\\"/g')
+          echo "changelog=$CHANGELOG_ESCAPED" >> "$GITHUB_OUTPUT"
+
       - name: Generate update.json
         run: |
           VERSION_TAG="${{ steps.version.outputs.tag }}"
           VERSION_CODE=$(grep -E 'versionCode' app/build.gradle.kts | sed -E 's/[^0-9]//g' | head -1)
-          printf '{\n  "versionName": "%s",\n  "versionCode": %s,\n  "apkUrl": "https://github.com/%s/releases/download/%s/IDT-Status-Widget-%s.apk",\n  "changelog": "Versao %s do IDT Status Widget.",\n  "minVersionCode": 1\n}\n' \
-            "$VERSION_TAG" "$VERSION_CODE" "${{ github.repository }}" "$VERSION_TAG" "$VERSION_TAG" "$VERSION_TAG" > dist/update.json
+          printf '{\n  "versionName": "%s",\n  "versionCode": %s,\n  "apkUrl": "https://github.com/%s/releases/download/%s/IDT-Status-Widget-%s.apk",\n  "changelog": "%s",\n  "minVersionCode": 1\n}\n' \
+            "$VERSION_TAG" "$VERSION_CODE" "${{ github.repository }}" "$VERSION_TAG" "$VERSION_TAG" "${{ steps.changelog.outputs.changelog }}" > dist/update.json
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
