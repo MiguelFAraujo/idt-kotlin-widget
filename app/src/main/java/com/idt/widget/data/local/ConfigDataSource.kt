@@ -42,10 +42,6 @@ class ConfigDataSource(context: Context) {
         configFlow.value = config
     }
 
-    fun updateLocal(f: (AppConfig) -> AppConfig) {
-        configFlow.value = f(configFlow.value)
-    }
-
     private fun load(): AppConfig = AppConfig(
         serverUrl = prefs.getString("server_url", "http://192.168.1.9") ?: "http://192.168.1.9",
         serverUser = prefs.getString("server_user", "") ?: "",
@@ -54,7 +50,7 @@ class ConfigDataSource(context: Context) {
         useWebDav = prefs.getBoolean("use_webdav", false),
         autoDiscover = prefs.getBoolean("auto_discover", true),
         autoRefresh = prefs.getBoolean("auto_refresh", true),
-        refreshIntervalSeconds = prefs.getLong("refresh_interval", 60),
+        refreshIntervalSeconds = prefs.getLong("refresh_interval", 10),
         showNotifications = prefs.getBoolean("show_notifications", false),
         compactView = prefs.getBoolean("compact_view", false),
         connectionConfigured = prefs.getBoolean("connection_configured", false),

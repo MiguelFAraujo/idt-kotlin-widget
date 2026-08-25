@@ -38,26 +38,6 @@ class ConnectionViewModel(
         }
     }
 
-    fun setUsername(username: String) {
-        // Store in config later
-    }
-
-    fun setPassword(password: String) {
-        // Store in config later
-    }
-
-    fun setUseWebDav(useWebDav: Boolean) {
-        // Update UI visibility handled in fragment
-    }
-
-    fun setWebDavPath(path: String) {
-        // Store in config later
-    }
-
-    fun setUseFingerprint(useFingerprint: Boolean) {
-        // Store in config later
-    }
-
     fun testConnection() {
         val url = (_uiState.value as? ConnectionUiState.Idle)?.serverUrl
             ?: (_uiState.value as? ConnectionUiState.TestSuccess)?.serverUrl

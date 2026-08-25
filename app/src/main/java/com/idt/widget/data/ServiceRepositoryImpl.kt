@@ -1,6 +1,7 @@
 package com.idt.widget.data
 
 import android.content.Context
+import android.util.Log
 import com.idt.widget.data.local.ConfigDataSource
 import com.idt.widget.data.model.ServiceCheckResult
 import com.idt.widget.data.model.ServiceEndpoint
@@ -136,12 +137,11 @@ class ServiceRepositoryImpl(
                 )
             }
         } catch (e: Exception) {
+            Log.e("ServiceRepo", "Error loading endpoints", e)
             emptyList()
         }
         return EndpointPolicy.filterStale(parsed, host)
     }
 
-    companion object {
-        private const val TAG = "ServiceRepository"
-    }
+
 }
