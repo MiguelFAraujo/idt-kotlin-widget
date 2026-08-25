@@ -2,6 +2,6 @@
   "versionName": "v1.0.6",
   "versionCode": 17,
   "apkUrl": "https://github.com/MiguelFAraujo/idt-kotlin-widget/releases/download/v1.0.6/IDT-Status-Widget-v1.0.6.apk",
-  "changelog": "Versao v1.0.6: limpeza de codigo morto, correcao de bugs, logs de erro, consistencia de defaults.",
+  "changelog": "• v1.0.6: remove dead code, fix bugs, add logging",
   "minVersionCode": 1
 }
