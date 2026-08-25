@@ -53,7 +53,6 @@ class ServiceCardAdapter(
             binding.tvStatus.text = if (item.ok) "online" else "offline"
             binding.tvStatus.setTextColor(dotColor)
 
-            binding.tvLatency.text = if (item.latencyMs >= 0) "${item.latencyMs}ms" else "—"
             binding.tvLatency.text = if (item.ok) "${item.latencyMs}ms" else (item.message)
 
             val stats = item.stats
