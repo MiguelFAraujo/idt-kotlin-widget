@@ -1,7 +1,7 @@
 {
   "versionName": "v1.1.1",
   "versionCode": 20,
-  "apkUrl": "https://github.com/MiguelFAraujo/idt-kotlin-widget/releases/download/v1.1.1/LabPulse-v1.1.1.apk",
-  "changelog": "v1.1.1: fix do bug EBADF na atualizacao automatica (fsync em fd fechado), workflow de release renomeado para LabPulse.",
+  "apkUrl": "https://github.com/MiguelFAraujo/idt-kotlin-widget/releases/download/v1.1.1/IDT-Status-Widget-v1.1.1.apk",
+  "changelog": "• v1.1.1: fix EBADF na auto-atualizacao (fsync em fd fechado) + workflow renomeado para LabPulse",
   "minVersionCode": 1
 }
