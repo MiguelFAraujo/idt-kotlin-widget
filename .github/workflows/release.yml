@@ -73,7 +73,7 @@ jobs:
         run: |
           VERSION_TAG="${{ steps.version.outputs.tag }}"
           VERSION_CODE=$(grep -E 'versionCode' app/build.gradle.kts | sed -E 's/[^0-9]//g' | head -1)
-          printf '{\n  "versionName": "%s",\n  "versionCode": %s,\n  "apkUrl": "https://github.com/%s/releases/download/%s/IDT-Status-Widget-%s.apk",\n  "changelog": "%s",\n  "minVersionCode": 1\n}\n' \
+          printf '{\n  "versionName": "%s",\n  "versionCode": %s,\n  "apkUrl": "https://github.com/%s/releases/download/%s/LabPulse-%s.apk",\n  "changelog": "%s",\n  "minVersionCode": 1\n}\n' \
             "$VERSION_TAG" "$VERSION_CODE" "${{ github.repository }}" "$VERSION_TAG" "$VERSION_TAG" "${{ steps.changelog.outputs.changelog }}" > dist/update.json
 
       - name: Create GitHub Release
