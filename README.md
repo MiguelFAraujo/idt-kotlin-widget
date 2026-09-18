@@ -1,9 +1,9 @@
-# IDT Status Widget
+# LabPulse
 
 > Registro: 2026-08-15 · Autor: Miguel Araujo · Modelo: opencode/big-pickle
 > Estado: ativo
 
-Monitor autônomo e completo de serviços para homelabs — painel animado, histórico de uptime, gráficos de latência, utilidades de rede, widget de tela inicial e alertas automáticos. Referência de monitoramento self-hosted.
+**O pulso do seu homelab.** Monitor autônomo e completo de serviços para homelabs — painel animado, histórico de uptime, gráficos de latência, utilidades de rede, widget de tela inicial e **alertas automáticos consolidados** (uma notificação lista todos os serviços fora do ar). 100% open source (MIT), 100% self-hosted. Projeto do [IDT-Lab](https://inteligenciadotopo.com.br).
 
 ## Funcionalidades
 
@@ -11,7 +11,7 @@ Monitor autônomo e completo de serviços para homelabs — painel animado, hist
 - **Histórico local** — janela deslizante de até 300 amostras por endpoint (persistido), uptime % e latência média derivados automaticamente.
 - **Gráficos** — linha de latência média com gradiente e média pontilhada; tira de uptime por serviço.
 - **Motor de verificação de 3 subprocessos + 5 rodadas de auth** — TCP probe → HTTP probe → rodadas R2 (Basic), R3 (Bearer), R4 (WebDAV PROPFIND), R5 (X-IDT-Token).
-- **Alertas autônomos** — notifica quando um serviço cai ou volta (deduplicado por endpoint, estado persistido).
+- **Alertas autônomos consolidados** — quando serviços caem, **uma única notificação** lista todos os fora do ar (hoje N serviços); quando todos voltam, uma única confirmação. Sem spam por porta.
 - **Utilidades de rede** — scan de portas comuns, resolução DNS, latência HTTP, exportação de configuração JSON e compartilhamento de relatório.
 - **Widget de tela inicial** — atualização periódica via WorkManager (mín. 15 min) + toque para refresh manual.
 - **Auto-atualização** — verificação diária de `update.json` (GitHub Releases), notificação e banner in-app com download direto.
@@ -79,7 +79,7 @@ adb install app/build/outputs/apk/debug/app-debug.apk
 # ou: copie o APK e instale via "fontes desconhecidas"
 ```
 
-Adicione o widget "IDT Status" à tela inicial segurando a área livre > Widgets.
+Adicione o widget "LabPulse" à tela inicial segurando a área livre > Widgets.
 
 ## Auto-atualização
 
