@@ -98,7 +98,7 @@ class DiagnosticsFragment : Fragment(R.layout.fragment_diagnostics) {
             val results = endpoints.filter { it.enabled }
                 .map { app.container.serviceRepository.checkService(it) }
             val report = buildString {
-                appendLine("IDT Status — Relatório de monitoramento")
+                appendLine("LabPulse — Relatório de monitoramento")
                 appendLine("Gerado: ${java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault()).format(java.util.Date())}")
                 appendLine()
                 val ok = results.count { it.ok }

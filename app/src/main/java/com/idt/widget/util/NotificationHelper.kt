@@ -25,7 +25,7 @@ object NotificationHelper {
             nm.createNotificationChannel(
                 NotificationChannel(
                     CHANNEL_UPDATE,
-                    "Atualizações do IDT Status",
+                    "Atualizações do LabPulse",
                     NotificationManager.IMPORTANCE_DEFAULT,
                 ).apply { description = "Avisa quando existe uma nova versão do app" }
             )
@@ -50,7 +50,7 @@ object NotificationHelper {
         val notif = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_info)
             .setContentTitle("Nova versão $versionName")
-            .setContentText("Uma atualização do IDT Status está disponível. Toque em Baixar agora.")
+            .setContentText("Uma atualização do LabPulse está disponível. Toque em Baixar agora.")
             .setStyle(NotificationCompat.BigTextStyle().bigText(
                 (if (changelog.isNotBlank()) "Novidades:\n$changelog\n\n" else "") +
                     "Toque em \"Baixar agora\" para instalar automaticamente."

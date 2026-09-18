@@ -109,7 +109,7 @@ class WidgetLiveService : Service() {
 
     private fun baseViews(widgetId: Int): RemoteViews =
         RemoteViews(packageName, R.layout.status_widget).apply {
-            setTextViewText(R.id.tvTitle, "IDT Lab · ${lastResults.count { it.ok }}/${lastResults.size}")
+            setTextViewText(R.id.tvTitle, "LabPulse · ${lastResults.count { it.ok }}/${lastResults.size}")
 
             val openApp = PendingIntent.getActivity(
                 this@WidgetLiveService, 0,

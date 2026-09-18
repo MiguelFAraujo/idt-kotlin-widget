@@ -87,7 +87,7 @@ class InstallResultReceiver : BroadcastReceiver() {
         if (Build.VERSION.SDK_INT >= 26) {
             val channel = android.app.NotificationChannel(
                 CHANNEL_UPDATE,
-                "Atualizações IDT Status",
+                "Atualizações LabPulse",
                 android.app.NotificationManager.IMPORTANCE_HIGH
             ).apply {
                 description = "Notificações de atualização automática do app"

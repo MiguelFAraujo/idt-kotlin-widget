@@ -11,15 +11,15 @@ class BiometricHelper(private val activity: FragmentActivity) {
 
     private val executor = ContextCompat.getMainExecutor(activity)
 
-    fun authenticate(reason: String = "Autentique para acessar o IDT Status"): CompletableDeferred<Boolean> = CompletableDeferred()
+    fun authenticate(reason: String = "Autentique para acessar o LabPulse"): CompletableDeferred<Boolean> = CompletableDeferred()
 
     fun authenticateWithCallback(
-        reason: String = "Autentique para acessar o IDT Status",
+        reason: String = "Autentique para acessar o LabPulse",
         onSuccess: () -> Unit,
         onError: (String) -> Unit,
     ) {
         val promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("IDT Status")
+            .setTitle("LabPulse")
             .setSubtitle("Autenticação biométrica")
             .setDescription(reason)
             .setNegativeButtonText("Cancelar")

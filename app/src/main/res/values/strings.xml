@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">IDT Status</string>
-    <string name="widget_name">IDT Status</string>
-    <string name="widget_description">Status dos serviços do IDT-Lab</string>
+    <string name="app_name">LabPulse</string>
+    <string name="widget_name">LabPulse</string>
+    <string name="widget_description">Pulso dos serviços do seu homelab</string>
 
     <!-- Dashboard -->
     <string name="refresh">Atualizar</string>
@@ -39,13 +39,13 @@
     <string name="widget_help">Como adicionar o widget</string>
     <string name="widget_help_summary">Instruções para adicionar à tela inicial</string>
 
-    <string name="about">Sobre o IDT Status</string>
+    <string name="about">Sobre o LabPulse</string>
     <string name="about_summary">Versão e créditos do app</string>
     <string name="about_version">Versão</string>
     <string name="about_changelog">Notas da versão</string>
     <string name="about_changelog_summary">O que mudou nesta atualização</string>
     <string name="about_repo">Repositório (código-fonte)</string>
-    <string name="about_repo_summary">GitHub · IDT Status</string>
+    <string name="about_repo_summary">GitHub · LabPulse</string>
     <string name="about_site">inteligenciadotopo.com.br</string>
     <string name="about_site_summary">Projeto IDT-Lab do homelab</string>
     <string name="changelog_title">Notas da versão %1$s</string>
@@ -122,6 +122,6 @@
     <string name="services_error">Erro: %1$s</string>
     <string name="status_online">online</string>
     <string name="status_offline">offline</string>
-    <string name="widget_name_short">IDT Lab</string>
+    <string name="widget_name_short">LabPulse</string>
 
 </resources>

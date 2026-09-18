@@ -55,7 +55,7 @@ class ApkUpdater(private val context: Context) {
         try {
             val dm = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             val request = DownloadManager.Request(Uri.parse(apkUrl))
-                .setTitle("IDT Status Update")
+                .setTitle("LabPulse Update")
                 .setDescription("Baixando versão mais recente...")
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                 .setDestinationInExternalFilesDir(context, Environment.DIRECTORY_DOWNLOADS, "idt-update-${System.currentTimeMillis()}.apk")

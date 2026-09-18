@@ -94,7 +94,7 @@ class StatusWidgetProvider : AppWidgetProvider() {
         fun updateWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
             val data = StatusData.read(context)
             val views = RemoteViews(context.packageName, R.layout.status_widget).apply {
-                setTextViewText(R.id.tvTitle, "IDT Lab")
+                setTextViewText(R.id.tvTitle, "LabPulse")
                 setTextViewText(R.id.tvStatus, if (data.results.isEmpty()) "Carregando..." else statusText(data.results))
 
                 val openApp = PendingIntent.getActivity(

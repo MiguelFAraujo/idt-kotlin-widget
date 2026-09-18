@@ -85,7 +85,7 @@
 
                         <TextView
                             android:id="@+id/tvOverallStatus"
-                            android:text="IDT Status"
+                            android:text="@string/app_name"
                             android:textSize="24sp"
                             android:textStyle="bold"
                             android:textColor="@android:color/white"
