@@ -162,10 +162,9 @@ class ApkUpdater(private val context: Context) {
             apkFile.inputStream().use { input ->
                 input.copyTo(out)
             }
-            out.close()
-
-            // FSYNC para garantir escrita no disco
+            // FSYNC antes de fechar o stream (fsync em fd fechado = EBADF)
             session.fsync(out)
+            out.close()
 
             // Commit - usa PendingIntent para receber resultado
             val pendingIntent = InstallResultReceiver.resultPendingIntent(

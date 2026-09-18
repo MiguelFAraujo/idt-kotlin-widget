@@ -53,7 +53,7 @@ jobs:
       - name: Name APK artifact
         run: |
           mkdir -p dist
-          cp "app/build/outputs/apk/release/$SIGNED_APK" dist/IDT-Status-Widget-${{ steps.version.outputs.tag }}.apk
+          cp "app/build/outputs/apk/release/$SIGNED_APK" dist/LabPulse-${{ steps.version.outputs.tag }}.apk
 
       - name: Generate changelog
         id: changelog
@@ -81,7 +81,7 @@ jobs:
         with:
           tag_name: ${{ steps.version.outputs.tag }}
           files: |
-            dist/IDT-Status-Widget-${{ steps.version.outputs.tag }}.apk
+            dist/LabPulse-${{ steps.version.outputs.tag }}.apk
             dist/update.json
 
       - name: Publish Update Manifest to main
