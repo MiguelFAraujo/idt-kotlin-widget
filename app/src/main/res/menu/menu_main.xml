@@ -26,4 +26,10 @@
         android:title="Utilidades"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_agents"
+        android:icon="@drawable/ic_info"
+        android:title="Agentes"
+        app:showAsAction="never" />
+
 </menu>

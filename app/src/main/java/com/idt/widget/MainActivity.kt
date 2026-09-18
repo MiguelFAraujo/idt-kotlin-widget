@@ -95,6 +95,10 @@ class MainActivity : AppCompatActivity() {
                 navController.navigate(R.id.action_dashboard_to_diagnostics)
                 true
             }
+            R.id.action_agents -> {
+                navController.navigate(R.id.action_dashboard_to_agents)
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
