@@ -1,7 +1,7 @@
 {
   "versionName": "v1.1.0",
   "versionCode": 19,
-  "apkUrl": "https://github.com/MiguelFAraujo/idt-kotlin-widget/releases/download/v1.1.0/LabPulse-v1.1.0.apk",
-  "changelog": "v1.1.0: rebrand LabPulse (nome + icone), notificacoes consolidadas em uma unica (sem spam por porta), identidade visual nova.",
+  "apkUrl": "https://github.com/MiguelFAraujo/idt-kotlin-widget/releases/download/v1.1.0/IDT-Status-Widget-v1.1.0.apk",
+  "changelog": "• v1.1.0: rebrand LabPulse (nome + icone + identidade), notificacoes consolidadas em uma unica",
   "minVersionCode": 1
 }
