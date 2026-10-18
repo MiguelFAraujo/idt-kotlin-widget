@@ -1,5 +1,9 @@
 package com.idt.widget.data.history
 
+// Preserve existing Kotlin imports while the repository contract owns its models.
+typealias HistorySample = com.idt.widget.domain.model.HistorySample
+typealias EndpointStats = com.idt.widget.domain.model.EndpointStats
+
 /**
  * Motor de histórico com janela deslizante (rolling window), 100% puro Kotlin
  * (sem dependência de Android) para ser testável em JVM.
@@ -8,25 +12,6 @@ package com.idt.widget.data.history
  * deriva estatísticas: uptime %, latência média, série para sparkline e
  * estado de transição (caiu/voltou).
  */
-data class HistorySample(
-    val ts: Long,
-    val ok: Boolean,
-    val latencyMs: Long,
-)
-
-data class EndpointStats(
-    val endpointId: String,
-    val samples: List<HistorySample>,
-    val uptimePercent: Double,
-    val avgLatencyMs: Double,
-    val lastOk: Boolean,
-    val transitionedDown: Boolean,
-    val transitionedUp: Boolean,
-) {
-    val latencySeriesMs: List<Long> get() = samples.map { it.latencyMs }
-    val okSeries: List<Boolean> get() = samples.map { it.ok }
-}
-
 class HistoryStore(
     private val maxSamplesPerEndpoint: Int = 300,
 ) {

@@ -20,6 +20,7 @@ Paths below are relative to `app/src/main/java/com/idt/widget/`.
 | Service contracts | `domain/repository/ServiceRepository.kt`, `domain/repository/HistoryRepository.kt` |
 | Service configuration/persistence | `data/local/ConfigDataSource.kt`, `data/ServiceRepositoryImpl.kt:31` |
 | HTTP checks and discovery | `data/remote/ServiceChecker.kt`, `DiagnosticsTool.kt`, `EndpointPolicy.kt`, `ServiceCatalog.kt` |
+| History values | `domain/model/HistoryModels.kt`; old Kotlin data-package imports remain aliases |
 | History calculation/storage | `data/history/HistoryStore.kt`, `PersistentHistoryRepository.kt:16` |
 | Dashboard presentation | `ui/dashboard/DashboardViewModel.kt:31` |
 | Port-scan presentation | `ui/scan/ScanViewModel.kt:27` |

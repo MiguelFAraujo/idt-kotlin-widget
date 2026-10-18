@@ -1,6 +1,6 @@
 package com.idt.widget.domain.repository
 
-import com.idt.widget.data.history.EndpointStats
+import com.idt.widget.domain.model.EndpointStats
 import com.idt.widget.data.model.ServiceCheckResult
 import kotlinx.coroutines.flow.Flow
 
