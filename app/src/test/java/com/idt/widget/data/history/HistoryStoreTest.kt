@@ -71,6 +71,23 @@ class HistoryStoreTest {
     }
 
     @Test
+    fun `legacy persisted history exposes domain statistics without a migration`() {
+        val legacy = """{"svc-legacy":[[1000,1,12],[2000,0,0]]}"""
+        val store = HistoryStore()
+
+        store.fromJson(legacy)
+        val stats: com.idt.widget.domain.model.EndpointStats = store.historyFor("svc-legacy")
+
+        assertEquals(listOf(1000L, 2000L), stats.samples.map { it.ts })
+        assertEquals(listOf(true, false), stats.okSeries)
+        assertEquals(listOf(12L, 0L), stats.latencySeriesMs)
+        assertEquals(50.0, stats.uptimePercent, 0.001)
+        assertEquals(12.0, stats.avgLatencyMs, 0.001)
+        assertTrue(stats.transitionedDown)
+        assertEquals(legacy, store.toJson())
+    }
+
+    @Test
     fun `fromJson with empty string is safe`() {
         val store = HistoryStore()
         store.fromJson("")
